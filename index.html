@@ -292,6 +292,19 @@
   /* ===== Process ===== */
   .process{background:var(--paper-dim);}
 
+  /* ===== Pricing ===== */
+  .pricing{background:var(--paper-dim);}
+  .pricing-placeholder{
+    max-width:640px; margin:0 auto; text-align:center;
+    background:var(--paper);
+    border:1px dashed rgba(11,27,54,0.25);
+    padding:48px 32px;
+  }
+  .pricing-placeholder p{
+    color:var(--ink-soft); font-size:0.98rem; line-height:1.6;
+    max-width:480px; margin:0 auto 8px;
+  }
+
   /* ===== Courtesies ===== */
   .courtesies{background:var(--paper);}
   .courtesy-grid{
@@ -570,6 +583,7 @@
     </div>
     <nav class="primary-nav">
       <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
       <a href="#book">Reservation</a>
     </nav>
     <a class="btn-gold" href="#book">Make a Reservation</a>
@@ -615,7 +629,7 @@
   <div class="wrap">
     <div class="section-head">
       <span class="kicker dark">What We Service</span>
-      <h2>Seven services. One visit.</h2>
+      <h2>Eight services. One visit.</h2>
       <p>The routine maintenance that keeps your vehicle running smoothly and safely — book what you need individually, or combine it all into one appointment.</p>
     </div>
 
@@ -669,11 +683,34 @@
         <p>Precise plug replacement for smoother starts, a steadier idle, and consistent performance.</p>
       </div>
 
+      <div class="service-card">
+        <div class="service-icon-wrap"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="tag">Seasonal</span>
+        <h3>Seasonal Tire Change</h3>
+        <p>Swap between summer and winter tire sets, with proper torque and a pressure check on every wheel.</p>
+      </div>
+
       <div class="service-card feature">
         <h3>Not sure what you need?</h3>
         <p>Describe the symptom, and we'll diagnose it. No inspection fee on any maintenance visit.</p>
         <a href="#book" class="btn-gold" style="align-self:flex-start; margin-top:6px; padding:10px 18px;">Request a Review</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Pricing ===== -->
+<section id="pricing" class="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">Transparent Rates</span>
+      <h2>Pricing, no surprises.</h2>
+      <p>Every quote is confirmed before we start — final pricing depends on your vehicle's make, model, and engine size.</p>
+    </div>
+    <div class="pricing-placeholder">
+      <p>Pricing details for each service are being finalized and will appear here shortly.</p>
+      <p>In the meantime, request a reservation and we'll confirm your exact quote before any work begins.</p>
+      <a href="#book" class="btn-gold" style="margin-top:14px; padding:10px 18px;">Get a Quote</a>
     </div>
   </div>
 </section>
@@ -784,6 +821,13 @@
           <span><a href="mailto:oilwrenchautocare@gmail.com" style="color:rgba(246,242,232,0.75);">oilwrenchautocare@gmail.com</a></span>
         </div>
       </div>
+      <div class="info-row">
+        <svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></svg>
+        <div>
+          <strong>Instagram</strong>
+          <span><a href="https://www.instagram.com/oilwrenchautocare?igsh=MzEweXQwZjczcGx6&amp;utm_source=qr" target="_blank" rel="noopener" style="color:rgba(246,242,232,0.75);">@oilwrenchautocare</a></span>
+        </div>
+      </div>
       <div class="info-row" style="border-bottom:none;">
         <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         <div style="width:100%;">
@@ -856,30 +900,8 @@
               <select id="vehicleModel" aria-label="Vehicle model" disabled>
                 <option value="" disabled selected>Select make first</option>
               </select>
-              <select id="vehicleEngine" name="vehicle_engine" aria-label="Engine size">
-                <option value="" disabled selected>Engine Size</option>
-                <option>1.0L</option>
-                <option>1.2L</option>
-                <option>1.4L</option>
-                <option>1.5L</option>
-                <option>1.6L</option>
-                <option>1.8L</option>
-                <option>2.0L</option>
-                <option>2.2L</option>
-                <option>2.4L</option>
-                <option>2.5L</option>
-                <option>2.7L</option>
-                <option>3.0L</option>
-                <option>3.5L</option>
-                <option>3.6L</option>
-                <option>3.8L</option>
-                <option>4.0L</option>
-                <option>4.6L</option>
-                <option>5.0L</option>
-                <option>5.3L</option>
-                <option>5.7L</option>
-                <option>6.0L+</option>
-                <option>Not sure</option>
+              <select id="vehicleEngine" name="vehicle_engine" aria-label="Engine size" disabled>
+                <option value="" disabled selected>Select model first</option>
               </select>
             </div>
             <input type="hidden" id="vehicleModelFinal" name="vehicle_model">
@@ -999,14 +1021,261 @@
       Other: ['Other / Not listed']
     };
 
+    const genericEngines = ['1.0L','1.2L','1.4L','1.5L','1.6L','1.8L','2.0L','2.2L','2.4L','2.5L','2.7L','3.0L','3.5L','3.6L','3.8L','4.0L','4.6L','5.0L','5.3L','5.7L','6.0L+','Not sure'];
+
+    const enginesByModel = {
+      'Acura|ILX': ['2.4L','Not sure'],
+      'Acura|TLX': ['2.0L','3.5L','Not sure'],
+      'Acura|RDX': ['2.0L','Not sure'],
+      'Acura|MDX': ['3.5L','Not sure'],
+      'Acura|Integra': ['1.5L','Not sure'],
+      'Acura|NSX': ['3.5L','Not sure'],
+      'Audi|A3': ['2.0L','Not sure'],
+      'Audi|A4': ['2.0L','Not sure'],
+      'Audi|A5': ['2.0L','3.0L','Not sure'],
+      'Audi|A6': ['2.0L','3.0L','Not sure'],
+      'Audi|A7': ['3.0L','Not sure'],
+      'Audi|A8': ['3.0L','4.0L','Not sure'],
+      'Audi|Q3': ['2.0L','Not sure'],
+      'Audi|Q5': ['2.0L','Not sure'],
+      'Audi|Q7': ['3.0L','Not sure'],
+      'Audi|Q8': ['3.0L','Not sure'],
+      'Audi|e-tron': ['Electric'],
+      'BMW|2 Series': ['2.0L','Not sure'],
+      'BMW|3 Series': ['2.0L','3.0L','Not sure'],
+      'BMW|4 Series': ['2.0L','3.0L','Not sure'],
+      'BMW|5 Series': ['2.0L','3.0L','Not sure'],
+      'BMW|7 Series': ['3.0L','4.4L','Not sure'],
+      'BMW|X1': ['2.0L','Not sure'],
+      'BMW|X3': ['2.0L','3.0L','Not sure'],
+      'BMW|X5': ['3.0L','4.4L','Not sure'],
+      'BMW|X7': ['3.0L','4.4L','Not sure'],
+      'BMW|i4': ['Electric'],
+      'Buick|Encore': ['1.4L','Not sure'],
+      'Buick|Encore GX': ['1.2L','1.3L','Not sure'],
+      'Buick|Envision': ['2.0L','Not sure'],
+      'Buick|Enclave': ['3.6L','Not sure'],
+      'Buick|Regal': ['2.0L','Not sure'],
+      'Cadillac|CT4': ['2.0L','Not sure'],
+      'Cadillac|CT5': ['2.0L','3.0L','Not sure'],
+      'Cadillac|XT4': ['2.0L','Not sure'],
+      'Cadillac|XT5': ['2.0L','3.6L','Not sure'],
+      'Cadillac|XT6': ['3.6L','Not sure'],
+      'Cadillac|Escalade': ['6.2L','Not sure'],
+      'Chevrolet|Spark': ['1.4L','Not sure'],
+      'Chevrolet|Sonic': ['1.4L','1.8L','Not sure'],
+      'Chevrolet|Cruze': ['1.4L','Not sure'],
+      'Chevrolet|Malibu': ['1.5L','2.0L','Not sure'],
+      'Chevrolet|Impala': ['2.5L','3.6L','Not sure'],
+      'Chevrolet|Camaro': ['2.0L','3.6L','6.2L','Not sure'],
+      'Chevrolet|Corvette': ['6.2L','Not sure'],
+      'Chevrolet|Trax': ['1.2L','1.4L','Not sure'],
+      'Chevrolet|Trailblazer': ['1.2L','1.3L','Not sure'],
+      'Chevrolet|Equinox': ['1.5L','Not sure'],
+      'Chevrolet|Blazer': ['2.0L','3.6L','Not sure'],
+      'Chevrolet|Traverse': ['3.6L','Not sure'],
+      'Chevrolet|Tahoe': ['5.3L','6.2L','Not sure'],
+      'Chevrolet|Suburban': ['5.3L','6.2L','Not sure'],
+      'Chevrolet|Colorado': ['2.5L','3.6L','Not sure'],
+      'Chevrolet|Silverado 1500': ['2.7L','5.3L','6.2L','Not sure'],
+      'Chevrolet|Silverado 2500HD': ['6.0L+','Not sure'],
+      'Chrysler|300': ['3.6L','Not sure'],
+      'Chrysler|Pacifica': ['3.6L','Not sure'],
+      'Chrysler|Voyager': ['3.6L','Not sure'],
+      'Dodge|Charger': ['3.6L','5.7L','6.0L+','Not sure'],
+      'Dodge|Challenger': ['3.6L','5.7L','6.0L+','Not sure'],
+      'Dodge|Durango': ['3.6L','5.7L','Not sure'],
+      'Dodge|Journey': ['2.4L','3.6L','Not sure'],
+      'Dodge|Grand Caravan': ['3.6L','Not sure'],
+      'Dodge|Hornet': ['1.3L','Not sure'],
+      'Ford|Fiesta': ['1.6L','Not sure'],
+      'Ford|Focus': ['2.0L','Not sure'],
+      'Ford|Fusion': ['1.5L','2.0L','2.5L','Not sure'],
+      'Ford|Mustang': ['2.3L','5.0L','Not sure'],
+      'Ford|EcoSport': ['1.0L','2.0L','Not sure'],
+      'Ford|Escape': ['1.5L','2.0L','Not sure'],
+      'Ford|Edge': ['2.0L','Not sure'],
+      'Ford|Explorer': ['2.3L','3.0L','Not sure'],
+      'Ford|Expedition': ['3.5L','Not sure'],
+      'Ford|Bronco': ['2.3L','2.7L','Not sure'],
+      'Ford|Bronco Sport': ['1.5L','2.0L','Not sure'],
+      'Ford|Ranger': ['2.3L','Not sure'],
+      'Ford|F-150': ['2.7L','3.5L','5.0L','Not sure'],
+      'Ford|F-250': ['6.2L','6.7L','Not sure'],
+      'Ford|Maverick': ['2.0L','2.5L','Not sure'],
+      'GMC|Terrain': ['1.5L','Not sure'],
+      'GMC|Acadia': ['2.0L','3.6L','Not sure'],
+      'GMC|Yukon': ['5.3L','6.2L','Not sure'],
+      'GMC|Canyon': ['2.5L','3.6L','Not sure'],
+      'GMC|Sierra 1500': ['2.7L','5.3L','6.2L','Not sure'],
+      'GMC|Sierra 2500HD': ['6.0L+','Not sure'],
+      'Honda|Fit': ['1.5L','Not sure'],
+      'Honda|Civic': ['1.5L','2.0L','Not sure'],
+      'Honda|Accord': ['1.5L','2.0L','Not sure'],
+      'Honda|Insight': ['1.5L','Not sure'],
+      'Honda|HR-V': ['1.5L','2.0L','Not sure'],
+      'Honda|CR-V': ['1.5L','2.0L','Not sure'],
+      'Honda|Passport': ['3.5L','Not sure'],
+      'Honda|Pilot': ['3.5L','Not sure'],
+      'Honda|Odyssey': ['3.5L','Not sure'],
+      'Honda|Ridgeline': ['3.5L','Not sure'],
+      'Hyundai|Accent': ['1.6L','Not sure'],
+      'Hyundai|Elantra': ['1.6L','2.0L','Not sure'],
+      'Hyundai|Sonata': ['1.6L','2.5L','Not sure'],
+      'Hyundai|Veloster': ['1.6L','2.0L','Not sure'],
+      'Hyundai|Venue': ['1.6L','Not sure'],
+      'Hyundai|Kona': ['2.0L','Not sure'],
+      'Hyundai|Tucson': ['2.5L','Not sure'],
+      'Hyundai|Santa Fe': ['2.5L','Not sure'],
+      'Hyundai|Palisade': ['3.8L','Not sure'],
+      'Hyundai|Santa Cruz': ['2.5L','Not sure'],
+      'Infiniti|Q50': ['2.0L','3.0L','Not sure'],
+      'Infiniti|Q60': ['2.0L','3.0L','Not sure'],
+      'Infiniti|QX50': ['2.0L','Not sure'],
+      'Infiniti|QX55': ['2.0L','Not sure'],
+      'Infiniti|QX60': ['3.5L','Not sure'],
+      'Infiniti|QX80': ['5.6L','Not sure'],
+      'Jeep|Renegade': ['1.3L','Not sure'],
+      'Jeep|Compass': ['2.4L','Not sure'],
+      'Jeep|Cherokee': ['2.4L','3.2L','Not sure'],
+      'Jeep|Grand Cherokee': ['3.6L','5.7L','Not sure'],
+      'Jeep|Wrangler': ['2.0L','3.6L','Not sure'],
+      'Jeep|Gladiator': ['3.6L','Not sure'],
+      'Jeep|Wagoneer': ['5.7L','Not sure'],
+      'Kia|Rio': ['1.6L','Not sure'],
+      'Kia|Forte': ['2.0L','Not sure'],
+      'Kia|K5': ['1.6L','2.5L','Not sure'],
+      'Kia|Stinger': ['2.5L','3.3L','Not sure'],
+      'Kia|Soul': ['2.0L','Not sure'],
+      'Kia|Seltos': ['2.0L','Not sure'],
+      'Kia|Sportage': ['2.5L','Not sure'],
+      'Kia|Sorento': ['2.5L','Not sure'],
+      'Kia|Telluride': ['3.8L','Not sure'],
+      'Kia|Niro': ['1.6L','Not sure'],
+      'Lexus|IS': ['2.0L','3.5L','Not sure'],
+      'Lexus|ES': ['2.5L','3.5L','Not sure'],
+      'Lexus|GS': ['3.5L','Not sure'],
+      'Lexus|LS': ['3.5L','Not sure'],
+      'Lexus|UX': ['2.0L','Not sure'],
+      'Lexus|NX': ['2.5L','Not sure'],
+      'Lexus|RX': ['2.5L','3.5L','Not sure'],
+      'Lexus|GX': ['4.0L','Not sure'],
+      'Lexus|LX': ['3.4L','Not sure'],
+      'Mazda|Mazda3': ['2.0L','2.5L','Not sure'],
+      'Mazda|Mazda6': ['2.5L','Not sure'],
+      'Mazda|CX-3': ['2.0L','Not sure'],
+      'Mazda|CX-30': ['2.5L','Not sure'],
+      'Mazda|CX-5': ['2.5L','Not sure'],
+      'Mazda|CX-9': ['2.5L','Not sure'],
+      'Mazda|CX-50': ['2.5L','Not sure'],
+      'Mazda|MX-5 Miata': ['2.0L','Not sure'],
+      'Mercedes-Benz|A-Class': ['2.0L','Not sure'],
+      'Mercedes-Benz|C-Class': ['2.0L','Not sure'],
+      'Mercedes-Benz|E-Class': ['2.0L','3.0L','Not sure'],
+      'Mercedes-Benz|S-Class': ['3.0L','4.0L','Not sure'],
+      'Mercedes-Benz|CLA': ['2.0L','Not sure'],
+      'Mercedes-Benz|GLA': ['2.0L','Not sure'],
+      'Mercedes-Benz|GLB': ['2.0L','Not sure'],
+      'Mercedes-Benz|GLC': ['2.0L','Not sure'],
+      'Mercedes-Benz|GLE': ['2.0L','3.0L','Not sure'],
+      'Mercedes-Benz|GLS': ['3.0L','Not sure'],
+      'Mercedes-Benz|Sprinter': ['2.0L','3.0L','Not sure'],
+      'Mitsubishi|Mirage': ['1.2L','Not sure'],
+      'Mitsubishi|Lancer': ['2.0L','Not sure'],
+      'Mitsubishi|Eclipse Cross': ['1.5L','Not sure'],
+      'Mitsubishi|Outlander': ['2.5L','Not sure'],
+      'Mitsubishi|Outlander Sport': ['2.0L','Not sure'],
+      'Nissan|Versa': ['1.6L','Not sure'],
+      'Nissan|Sentra': ['2.0L','Not sure'],
+      'Nissan|Altima': ['2.5L','Not sure'],
+      'Nissan|Maxima': ['3.5L','Not sure'],
+      'Nissan|Kicks': ['1.6L','Not sure'],
+      'Nissan|Rogue': ['1.5L','Not sure'],
+      'Nissan|Murano': ['3.5L','Not sure'],
+      'Nissan|Pathfinder': ['3.5L','Not sure'],
+      'Nissan|Armada': ['5.6L','Not sure'],
+      'Nissan|Frontier': ['3.8L','Not sure'],
+      'Nissan|Titan': ['5.6L','Not sure'],
+      'Ram|1500': ['3.6L','5.7L','Not sure'],
+      'Ram|2500': ['6.0L+','6.7L','Not sure'],
+      'Ram|3500': ['6.0L+','6.7L','Not sure'],
+      'Ram|ProMaster': ['3.6L','Not sure'],
+      'Subaru|Impreza': ['2.0L','Not sure'],
+      'Subaru|Legacy': ['2.5L','Not sure'],
+      'Subaru|WRX': ['2.4L','Not sure'],
+      'Subaru|Crosstrek': ['2.0L','2.5L','Not sure'],
+      'Subaru|Forester': ['2.5L','Not sure'],
+      'Subaru|Outback': ['2.5L','Not sure'],
+      'Subaru|Ascent': ['2.4L','Not sure'],
+      'Toyota|Corolla': ['1.8L','2.0L','Not sure'],
+      'Toyota|Camry': ['2.5L','3.5L','Not sure'],
+      'Toyota|Avalon': ['2.5L','3.5L','Not sure'],
+      'Toyota|Prius': ['1.8L','Not sure'],
+      'Toyota|C-HR': ['2.0L','Not sure'],
+      'Toyota|RAV4': ['2.5L','Not sure'],
+      'Toyota|Venza': ['2.5L','Not sure'],
+      'Toyota|Highlander': ['2.4L','3.5L','Not sure'],
+      'Toyota|4Runner': ['4.0L','Not sure'],
+      'Toyota|Sequoia': ['3.4L','Not sure'],
+      'Toyota|Tacoma': ['2.4L','3.5L','Not sure'],
+      'Toyota|Tundra': ['3.4L','Not sure'],
+      'Toyota|Sienna': ['2.5L','Not sure'],
+      'Volkswagen|Jetta': ['1.5L','Not sure'],
+      'Volkswagen|Passat': ['2.0L','Not sure'],
+      'Volkswagen|Golf': ['1.4L','Not sure'],
+      'Volkswagen|Golf GTI': ['2.0L','Not sure'],
+      'Volkswagen|Taos': ['1.5L','Not sure'],
+      'Volkswagen|Tiguan': ['2.0L','Not sure'],
+      'Volkswagen|Atlas': ['2.0L','3.6L','Not sure'],
+      'Volkswagen|Atlas Cross Sport': ['2.0L','3.6L','Not sure'],
+      'Volkswagen|ID.4': ['Electric'],
+      'Volvo|S60': ['2.0L','Not sure'],
+      'Volvo|S90': ['2.0L','Not sure'],
+      'Volvo|V60': ['2.0L','Not sure'],
+      'Volvo|XC40': ['2.0L','Not sure'],
+      'Volvo|XC60': ['2.0L','Not sure'],
+      'Volvo|XC90': ['2.0L','Not sure']
+    };
+
     const makeSelect = document.getElementById('vehicleMake');
     const modelSelect = document.getElementById('vehicleModel');
     const modelFinal = document.getElementById('vehicleModelFinal');
     const customInput = document.getElementById('vehicleModelCustom');
+    const engineSelect = document.getElementById('vehicleEngine');
 
     function resetCustomInput(){
       customInput.style.display = 'none';
       customInput.value = '';
+    }
+
+    function populateEngineOptions(list, placeholderText){
+      engineSelect.innerHTML = '';
+      engineSelect.disabled = false;
+
+      const placeholderOpt = document.createElement('option');
+      placeholderOpt.value = '';
+      placeholderOpt.disabled = true;
+      placeholderOpt.selected = true;
+      placeholderOpt.textContent = placeholderText || 'Engine Size';
+      engineSelect.appendChild(placeholderOpt);
+
+      list.forEach(size => {
+        const opt = document.createElement('option');
+        opt.value = size;
+        opt.textContent = size;
+        engineSelect.appendChild(opt);
+      });
+    }
+
+    function resetEngineSelect(){
+      engineSelect.innerHTML = '';
+      engineSelect.disabled = true;
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.disabled = true;
+      opt.selected = true;
+      opt.textContent = 'Select model first';
+      engineSelect.appendChild(opt);
     }
 
     makeSelect.addEventListener('change', () => {
@@ -1030,6 +1299,7 @@
 
       modelFinal.value = '';
       resetCustomInput();
+      resetEngineSelect();
     });
 
     modelSelect.addEventListener('change', () => {
@@ -1038,15 +1308,20 @@
         customInput.value = '';
         customInput.focus();
         modelFinal.value = '';
+        populateEngineOptions(genericEngines);
       } else {
         resetCustomInput();
         modelFinal.value = modelSelect.value;
+        const key = makeSelect.value + '|' + modelSelect.value;
+        populateEngineOptions(enginesByModel[key] || genericEngines);
       }
     });
 
     customInput.addEventListener('input', () => {
       modelFinal.value = customInput.value;
     });
+
+    resetEngineSelect();
   })();
 
   // Populate the vehicle year dropdown (current year down to 1980)
