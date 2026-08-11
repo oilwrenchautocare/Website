@@ -33,6 +33,7 @@
     font-family:'Inter', sans-serif;
     line-height:1.55;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
   h1,h2,h3,h4{
     font-family:'Playfair Display', serif;
@@ -290,6 +291,31 @@
 
   /* ===== Process ===== */
   .process{background:var(--paper-dim);}
+
+  /* ===== Courtesies ===== */
+  .courtesies{background:var(--paper);}
+  .courtesy-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .courtesy-item{
+    display:flex; align-items:flex-start; gap:16px;
+    background:var(--paper-dim);
+    border:1px solid var(--hair);
+    padding:26px 24px;
+  }
+  .courtesy-icon{
+    flex:none; width:30px; height:30px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+    color:var(--navy-black);
+  }
+  .courtesy-icon svg{width:16px; height:16px;}
+  .courtesy-item h4{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:0.98rem;
+    color:var(--navy-deep); margin-bottom:4px;
+  }
+  .courtesy-item p{font-size:0.86rem; color:var(--ink-soft); line-height:1.5;}
   .process-grid{
     display:grid; grid-template-columns:repeat(3, 1fr); gap:0;
     border:1px solid var(--hair);
@@ -357,7 +383,7 @@
     border-radius:0;
     color:var(--paper);
     font-family:'Inter', sans-serif;
-    font-size:0.98rem;
+    font-size:1rem;
   }
   .field select option{color:#111;}
   .field input::placeholder{color:rgba(246,242,232,0.32);}
@@ -384,6 +410,7 @@
     .seal-wrap{order:-1; margin-bottom:20px;}
     .seal-frame{max-width:280px;}
     .service-grid{grid-template-columns:repeat(2,1fr);}
+    .courtesy-grid{grid-template-columns:repeat(2,1fr);}
     .band-grid{grid-template-columns:repeat(2,1fr); gap:28px;}
     .process-grid{grid-template-columns:1fr;}
     .contact-grid{grid-template-columns:1fr;}
@@ -391,6 +418,7 @@
   }
   @media (max-width: 560px){
     .service-grid{grid-template-columns:1fr;}
+    .courtesy-grid{grid-template-columns:1fr;}
     .hero{padding:80px 0 80px;}
     section{padding:70px 0;}
     .hero-ctas{flex-direction:column; align-items:stretch;}
@@ -469,7 +497,7 @@
         <div class="service-icon-wrap"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M12 3c3 0 5 2 5 5v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9c0-3 2-5 5-5z" stroke="currentColor" stroke-width="1.5"/><path d="M17 10h1a1 1 0 0 1 1 1v4a1.5 1.5 0 0 1-3 0" stroke="currentColor" stroke-width="1.5"/></svg></div>
         <span class="tag">Core Service</span>
         <h3>Oil Change<br>(Full Vehicle Check)</h3>
-        <p>Precision oil and filter service using regular, full synthetic, or premium synthetic formulations engineered for German vehicles — complemented by a comprehensive multi-point inspection of belts, fluids, and wear components.</p>
+        <p>Precision oil and filter service using regular, full synthetic, or premium synthetic formulations engineered for German vehicles.</p>
       </div>
 
       <div class="service-card">
@@ -523,11 +551,58 @@
   </div>
 </section>
 
+<!-- ===== Complimentary Courtesies ===== -->
+<section class="courtesies">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">On the House</span>
+      <h2>Complimentary courtesies, every visit.</h2>
+      <p>Small details, handled without being asked — part of every appointment at no extra cost.</p>
+    </div>
+    <div class="courtesy-grid">
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Tire Pressure &amp; Tread Check</h4>
+          <p>Every tire checked and set to spec, with tread depth assessed for even wear.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Windshield Washer Fluid Top-Up</h4>
+          <p>Topped off so your view of the road stays clear when you need it most.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Coolant Top-Up</h4>
+          <p>Levels checked and replenished to help protect your engine against overheating.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Exterior Window Wash</h4>
+          <p>A quick wash of your windows, so you leave with a clearer view all around.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Free Underneath Inspection</h4>
+          <p>A complimentary multi-point inspection of belts, fluids, and wear components beneath your vehicle.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== Stats band ===== -->
 <div class="band">
   <div class="wrap band-grid">
-    <div class="band-item"><strong>7</strong><span>Maintenance services offered</span></div>
-    <div class="band-item"><strong>15′</strong><span>Typical oil service, in minutes</span></div>
+    <div class="band-item"><strong>15-30′</strong><span>Typical oil service, in minutes</span></div>
     <div class="band-item"><strong>100%</strong><span>Vehicle check, every visit</span></div>
     <div class="band-item"><strong>Zero</strong><span>Hidden fees, ever</span></div>
   </div>
@@ -610,15 +685,15 @@
         <form id="bookingForm" onsubmit="handleBooking(event)">
           <div class="field">
             <label for="name">Full name</label>
-            <input id="name" type="text" placeholder="Jordan Smith" required>
+            <input id="name" name="name" type="text" placeholder="Jordan Smith" required>
           </div>
           <div class="field">
             <label for="phone">Phone number</label>
-            <input id="phone" type="tel" placeholder="(555) 000-0000" required>
+            <input id="phone" name="phone" type="tel" placeholder="(555) 000-0000" required>
           </div>
           <div class="field">
             <label for="service">Service needed</label>
-            <select id="service" required>
+            <select id="service" name="service" required>
               <option value="" disabled selected>Choose a service</option>
               <option>Oil Change (Full Vehicle Check)</option>
               <option>Transmission Service</option>
@@ -632,11 +707,14 @@
           </div>
           <div class="field">
             <label for="date">Preferred date</label>
-            <input id="date" type="date">
+            <input id="date" name="date" type="date">
           </div>
+          <input type="hidden" name="_subject" value="New Reservation Request — OilWrench Auto Care">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
           <button type="submit" class="btn-gold">Request Reservation</button>
         </form>
-        <p class="form-note">This form is a placeholder — connect it to your booking system or phone line to go live.</p>
+        <p class="form-note" id="formNote">Reservation requests are sent directly to our team by email.</p>
       </div>
     </div>
   </div>
@@ -655,10 +733,31 @@
 <script>
   function handleBooking(e){
     e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    const note = document.getElementById('formNote');
     const original = btn.textContent;
-    btn.textContent = 'Reservation Requested (demo)';
-    setTimeout(() => { btn.textContent = original; }, 2400);
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    fetch('https://formsubmit.co/ajax/oilwrenchautocare@gmail.com', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    })
+    .then(res => res.ok ? res.json() : Promise.reject())
+    .then(() => {
+      btn.textContent = 'Reservation Sent ✓';
+      note.textContent = "Thanks — we've received your request and will confirm shortly.";
+      form.reset();
+      setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
+    })
+    .catch(() => {
+      btn.textContent = 'Something went wrong';
+      note.textContent = 'Please call (343) 989-4472 or email us directly instead.';
+      setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
+    });
   }
 </script>
 
