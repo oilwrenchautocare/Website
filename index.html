@@ -415,7 +415,7 @@
     color:var(--paper); margin:2px 0 12px;
   }
   .vehicle-grid{
-    display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 16px;
   }
   .vehicle-grid select,
   .vehicle-grid input{
@@ -431,6 +431,19 @@
   .vehicle-grid select option{color:#111;}
   .vehicle-grid select:focus,
   .vehicle-grid input:focus{border-bottom-color:var(--gold-light); outline:none;}
+  .vehicle-grid select:disabled{color:rgba(246,242,232,0.32); cursor:not-allowed;}
+  #vehicleModelCustom{
+    width:100%; padding:12px 4px;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(246,242,232,0.25);
+    border-radius:0;
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+  }
+  #vehicleModelCustom:focus{border-bottom-color:var(--gold-light); outline:none;}
+  #vehicleModelCustom::placeholder{color:rgba(246,242,232,0.32);}
 
   .multiselect{position:relative;}
   .multiselect-control{
@@ -807,7 +820,6 @@
           </div>
           <div class="field">
             <label>Vehicle</label>
-            <div class="vehicle-subhead">Choose Your Vehicle</div>
             <div class="vehicle-grid">
               <select id="vehicleYear" name="vehicle_year" aria-label="Vehicle year">
                 <option value="" disabled selected>Year</option>
@@ -841,8 +853,37 @@
                 <option>Volvo</option>
                 <option>Other</option>
               </select>
-              <input id="vehicleModel" name="vehicle_model" type="text" placeholder="Model" aria-label="Vehicle model">
+              <select id="vehicleModel" aria-label="Vehicle model" disabled>
+                <option value="" disabled selected>Select make first</option>
+              </select>
+              <select id="vehicleEngine" name="vehicle_engine" aria-label="Engine size">
+                <option value="" disabled selected>Engine Size</option>
+                <option>1.0L</option>
+                <option>1.2L</option>
+                <option>1.4L</option>
+                <option>1.5L</option>
+                <option>1.6L</option>
+                <option>1.8L</option>
+                <option>2.0L</option>
+                <option>2.2L</option>
+                <option>2.4L</option>
+                <option>2.5L</option>
+                <option>2.7L</option>
+                <option>3.0L</option>
+                <option>3.5L</option>
+                <option>3.6L</option>
+                <option>3.8L</option>
+                <option>4.0L</option>
+                <option>4.6L</option>
+                <option>5.0L</option>
+                <option>5.3L</option>
+                <option>5.7L</option>
+                <option>6.0L+</option>
+                <option>Not sure</option>
+              </select>
             </div>
+            <input type="hidden" id="vehicleModelFinal" name="vehicle_model">
+            <input id="vehicleModelCustom" type="text" placeholder="Enter model" aria-label="Custom vehicle model" style="display:none; margin-top:10px;">
           </div>
           <div class="field">
             <label>Service(s) needed</label>
@@ -924,6 +965,87 @@
     });
     dayEl.addEventListener('keydown', (e) => {
       if (e.key === 'Backspace' && dayEl.value === '') monthEl.focus();
+    });
+  })();
+
+  // Vehicle: populate Model dropdown based on selected Make
+  (function(){
+    const modelsByMake = {
+      Acura: ['ILX','TLX','RDX','MDX','Integra','NSX','Other / Not listed'],
+      Audi: ['A3','A4','A5','A6','A7','A8','Q3','Q5','Q7','Q8','e-tron','Other / Not listed'],
+      BMW: ['2 Series','3 Series','4 Series','5 Series','7 Series','X1','X3','X5','X7','i4','Other / Not listed'],
+      Buick: ['Encore','Encore GX','Envision','Enclave','Regal','Other / Not listed'],
+      Cadillac: ['CT4','CT5','XT4','XT5','XT6','Escalade','Other / Not listed'],
+      Chevrolet: ['Spark','Sonic','Cruze','Malibu','Impala','Camaro','Corvette','Trax','Trailblazer','Equinox','Blazer','Traverse','Tahoe','Suburban','Colorado','Silverado 1500','Silverado 2500HD','Other / Not listed'],
+      Chrysler: ['300','Pacifica','Voyager','Other / Not listed'],
+      Dodge: ['Charger','Challenger','Durango','Journey','Grand Caravan','Hornet','Other / Not listed'],
+      Ford: ['Fiesta','Focus','Fusion','Mustang','EcoSport','Escape','Edge','Explorer','Expedition','Bronco','Bronco Sport','Ranger','F-150','F-250','Maverick','Other / Not listed'],
+      GMC: ['Terrain','Acadia','Yukon','Canyon','Sierra 1500','Sierra 2500HD','Other / Not listed'],
+      Honda: ['Fit','Civic','Accord','Insight','HR-V','CR-V','Passport','Pilot','Odyssey','Ridgeline','Other / Not listed'],
+      Hyundai: ['Accent','Elantra','Sonata','Veloster','Venue','Kona','Tucson','Santa Fe','Palisade','Santa Cruz','Other / Not listed'],
+      Infiniti: ['Q50','Q60','QX50','QX55','QX60','QX80','Other / Not listed'],
+      Jeep: ['Renegade','Compass','Cherokee','Grand Cherokee','Wrangler','Gladiator','Wagoneer','Other / Not listed'],
+      Kia: ['Rio','Forte','K5','Stinger','Soul','Seltos','Sportage','Sorento','Telluride','Niro','Other / Not listed'],
+      Lexus: ['IS','ES','GS','LS','UX','NX','RX','GX','LX','Other / Not listed'],
+      Mazda: ['Mazda3','Mazda6','CX-3','CX-30','CX-5','CX-9','CX-50','MX-5 Miata','Other / Not listed'],
+      'Mercedes-Benz': ['A-Class','C-Class','E-Class','S-Class','CLA','GLA','GLB','GLC','GLE','GLS','Sprinter','Other / Not listed'],
+      Mitsubishi: ['Mirage','Lancer','Eclipse Cross','Outlander','Outlander Sport','Other / Not listed'],
+      Nissan: ['Versa','Sentra','Altima','Maxima','Kicks','Rogue','Murano','Pathfinder','Armada','Frontier','Titan','Other / Not listed'],
+      Ram: ['1500','2500','3500','ProMaster','Other / Not listed'],
+      Subaru: ['Impreza','Legacy','WRX','Crosstrek','Forester','Outback','Ascent','Other / Not listed'],
+      Toyota: ['Corolla','Camry','Avalon','Prius','C-HR','RAV4','Venza','Highlander','4Runner','Sequoia','Tacoma','Tundra','Sienna','Other / Not listed'],
+      Volkswagen: ['Jetta','Passat','Golf','Golf GTI','Taos','Tiguan','Atlas','Atlas Cross Sport','ID.4','Other / Not listed'],
+      Volvo: ['S60','S90','V60','XC40','XC60','XC90','Other / Not listed'],
+      Other: ['Other / Not listed']
+    };
+
+    const makeSelect = document.getElementById('vehicleMake');
+    const modelSelect = document.getElementById('vehicleModel');
+    const modelFinal = document.getElementById('vehicleModelFinal');
+    const customInput = document.getElementById('vehicleModelCustom');
+
+    function resetCustomInput(){
+      customInput.style.display = 'none';
+      customInput.value = '';
+    }
+
+    makeSelect.addEventListener('change', () => {
+      const models = modelsByMake[makeSelect.value] || [];
+      modelSelect.innerHTML = '';
+      modelSelect.disabled = false;
+
+      const placeholderOpt = document.createElement('option');
+      placeholderOpt.value = '';
+      placeholderOpt.disabled = true;
+      placeholderOpt.selected = true;
+      placeholderOpt.textContent = 'Model';
+      modelSelect.appendChild(placeholderOpt);
+
+      models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        modelSelect.appendChild(opt);
+      });
+
+      modelFinal.value = '';
+      resetCustomInput();
+    });
+
+    modelSelect.addEventListener('change', () => {
+      if (modelSelect.value === 'Other / Not listed') {
+        customInput.style.display = 'block';
+        customInput.value = '';
+        customInput.focus();
+        modelFinal.value = '';
+      } else {
+        resetCustomInput();
+        modelFinal.value = modelSelect.value;
+      }
+    });
+
+    customInput.addEventListener('input', () => {
+      modelFinal.value = customInput.value;
     });
   })();
 
