@@ -388,17 +388,118 @@
   .field select option{color:#111;}
   .field input::placeholder{color:rgba(246,242,232,0.32);}
   .field input:focus, .field select:focus{border-bottom-color:var(--gold-light);}
-  .service-checks{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px 16px;
+  .date-parts{
+    display:flex; align-items:center; gap:6px;
   }
+  .date-parts input{
+    width:auto; flex:none;
+    padding:12px 2px;
+    text-align:center;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(246,242,232,0.25);
+    border-radius:0;
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:1rem;
+    letter-spacing:0.04em;
+  }
+  .date-parts input#dateYear{width:4.2ch;}
+  .date-parts input#dateMonth,
+  .date-parts input#dateDay{width:2.6ch;}
+  .date-parts input:focus{border-bottom-color:var(--gold-light); outline:none;}
+  .date-sep{color:rgba(246,242,232,0.4); font-family:'JetBrains Mono', monospace;}
+
+  .vehicle-subhead{
+    font-family:'Playfair Display', serif; font-size:1.02rem;
+    color:var(--paper); margin:2px 0 12px;
+  }
+  .vehicle-grid{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;
+  }
+  .vehicle-grid select,
+  .vehicle-grid input{
+    width:100%; padding:12px 4px;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(246,242,232,0.25);
+    border-radius:0;
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+  }
+  .vehicle-grid select option{color:#111;}
+  .vehicle-grid select:focus,
+  .vehicle-grid input:focus{border-bottom-color:var(--gold-light); outline:none;}
+
+  .multiselect{position:relative;}
+  .multiselect-control{
+    width:100%; min-height:48px; padding:10px 34px 10px 4px;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(246,242,232,0.25);
+    border-radius:0;
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+    text-align:left;
+    cursor:pointer;
+    position:relative;
+    display:flex; align-items:center;
+  }
+  .multiselect-control:focus{outline:none; border-bottom-color:var(--gold-light);}
+  .multiselect-chips{
+    display:flex; flex-wrap:wrap; gap:6px; flex:1;
+  }
+  .multiselect-placeholder{color:rgba(246,242,232,0.32);}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(200,164,92,0.14);
+    border:1px solid rgba(200,164,92,0.4);
+    color:var(--gold-light);
+    font-size:0.78rem;
+    padding:4px 8px 4px 10px;
+    border-radius:999px;
+  }
+  .chip button{
+    background:none; border:none; color:var(--gold-light);
+    cursor:pointer; font-size:0.9rem; line-height:1; padding:0;
+    display:flex; align-items:center;
+  }
+  .multiselect-arrow{
+    width:16px; height:16px; position:absolute; right:4px; top:50%;
+    transform:translateY(-50%);
+    color:rgba(246,242,232,0.5);
+    transition:transform 0.15s ease;
+  }
+  .multiselect.open .multiselect-arrow{transform:translateY(-50%) rotate(180deg);}
+  .multiselect-panel{
+    display:none;
+    position:absolute; left:0; right:0; top:calc(100% + 6px);
+    background:var(--navy-deep);
+    border:1px solid rgba(246,242,232,0.18);
+    border-radius:6px;
+    padding:10px 14px;
+    z-index:20;
+    box-shadow:0 12px 28px rgba(0,0,0,0.35);
+    max-height:260px;
+    overflow-y:auto;
+  }
+  .multiselect.open .multiselect-panel{display:block;}
   .check-item{
-    display:flex; align-items:center; gap:9px;
+    display:flex; align-items:flex-start; gap:12px;
     font-size:0.88rem; color:rgba(246,242,232,0.82);
     cursor:pointer;
+    padding:8px 0;
   }
   .check-item input[type="checkbox"]{
-    width:16px; height:16px; flex:none; accent-color:var(--gold);
+    width:18px; height:18px; flex:none; accent-color:var(--gold);
     cursor:pointer;
+    margin:2px 0 0 0;
+  }
+  .check-item span{
+    padding-left:6px;
+    line-height:1.4;
   }
   .voucher .btn-gold{width:100%; justify-content:center; margin-top:10px; padding:14px 22px;}
   .form-note{font-size:0.76rem; color:rgba(246,242,232,0.42); margin-top:16px; text-align:center; letter-spacing:0.02em;}
@@ -435,7 +536,7 @@
     section{padding:70px 0;}
     .hero-ctas{flex-direction:column; align-items:stretch;}
     .hero-trust div{flex:1 1 45%; margin-bottom:14px;}
-    .service-checks{grid-template-columns:1fr;}
+    .vehicle-grid{grid-template-columns:1fr;}
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -705,21 +806,74 @@
             <input id="phone" name="phone" type="tel" placeholder="(555) 000-0000" required>
           </div>
           <div class="field">
-            <label>Service(s) needed</label>
-            <div class="service-checks">
-              <label class="check-item"><input type="checkbox" name="services" value="Oil Change (Full Vehicle Check)"><span>Oil Change (Full Vehicle Check)</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Transmission Service"><span>Transmission Service</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="AWD System Service"><span>AWD System Service</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Differential Service"><span>Differential Service</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Fluid Service"><span>Fluid Service</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Engine &amp; Cabin Air Filter"><span>Engine &amp; Cabin Air Filter</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Spark Plugs"><span>Spark Plugs</span></label>
-              <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
+            <label>Vehicle</label>
+            <div class="vehicle-subhead">Choose Your Vehicle</div>
+            <div class="vehicle-grid">
+              <select id="vehicleYear" name="vehicle_year" aria-label="Vehicle year">
+                <option value="" disabled selected>Year</option>
+              </select>
+              <select id="vehicleMake" name="vehicle_make" aria-label="Vehicle make">
+                <option value="" disabled selected>Make</option>
+                <option>Acura</option>
+                <option>Audi</option>
+                <option>BMW</option>
+                <option>Buick</option>
+                <option>Cadillac</option>
+                <option>Chevrolet</option>
+                <option>Chrysler</option>
+                <option>Dodge</option>
+                <option>Ford</option>
+                <option>GMC</option>
+                <option>Honda</option>
+                <option>Hyundai</option>
+                <option>Infiniti</option>
+                <option>Jeep</option>
+                <option>Kia</option>
+                <option>Lexus</option>
+                <option>Mazda</option>
+                <option>Mercedes-Benz</option>
+                <option>Mitsubishi</option>
+                <option>Nissan</option>
+                <option>Ram</option>
+                <option>Subaru</option>
+                <option>Toyota</option>
+                <option>Volkswagen</option>
+                <option>Volvo</option>
+                <option>Other</option>
+              </select>
+              <input id="vehicleModel" name="vehicle_model" type="text" placeholder="Model" aria-label="Vehicle model">
             </div>
           </div>
           <div class="field">
-            <label for="date">Preferred date</label>
-            <input id="date" type="date">
+            <label>Service(s) needed</label>
+            <div class="multiselect" id="serviceSelect">
+              <button type="button" class="multiselect-control" id="serviceControl" aria-expanded="false">
+                <span class="multiselect-chips" id="serviceChips">
+                  <span class="multiselect-placeholder" id="servicePlaceholder">Select service(s)</span>
+                </span>
+                <svg class="multiselect-arrow" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="multiselect-panel" id="servicePanel">
+                <label class="check-item"><input type="checkbox" name="services" value="Oil Change (Full Vehicle Check)"><span>Oil Change (Full Vehicle Check)</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Transmission Service"><span>Transmission Service</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="AWD System Service"><span>AWD System Service</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Differential Service"><span>Differential Service</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Fluid Service"><span>Fluid Service</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Engine &amp; Cabin Air Filter"><span>Engine &amp; Cabin Air Filter</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Spark Plugs"><span>Spark Plugs</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="dateYear">Preferred date</label>
+            <div class="date-parts">
+              <input id="dateYear" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="YYYY" aria-label="Year">
+              <span class="date-sep">/</span>
+              <input id="dateMonth" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" aria-label="Month">
+              <span class="date-sep">/</span>
+              <input id="dateDay" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="DD" aria-label="Day">
+            </div>
             <input type="hidden" id="dateFormatted" name="date">
           </div>
           <input type="hidden" name="_subject" value="New Reservation Request — OilWrench Auto Care">
@@ -744,6 +898,100 @@
 </footer>
 
 <script>
+  // Auto-advance between the Year / Month / Day date fields
+  (function(){
+    const yearEl = document.getElementById('dateYear');
+    const monthEl = document.getElementById('dateMonth');
+    const dayEl = document.getElementById('dateDay');
+
+    function digitsOnly(el){
+      el.value = el.value.replace(/\D/g, '');
+    }
+
+    yearEl.addEventListener('input', () => {
+      digitsOnly(yearEl);
+      if (yearEl.value.length >= 4) monthEl.focus();
+    });
+    monthEl.addEventListener('input', () => {
+      digitsOnly(monthEl);
+      if (monthEl.value.length >= 2) dayEl.focus();
+    });
+    dayEl.addEventListener('input', () => {
+      digitsOnly(dayEl);
+    });
+    monthEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && monthEl.value === '') yearEl.focus();
+    });
+    dayEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && dayEl.value === '') monthEl.focus();
+    });
+  })();
+
+  // Populate the vehicle year dropdown (current year down to 1980)
+  (function(){
+    const yearSelect = document.getElementById('vehicleYear');
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear + 1; y >= 1980; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSelect.appendChild(opt);
+    }
+  })();
+
+  // Services needed: dropdown multi-select with chips
+  (function(){
+    const wrapper = document.getElementById('serviceSelect');
+    const control = document.getElementById('serviceControl');
+    const panel = document.getElementById('servicePanel');
+    const chips = document.getElementById('serviceChips');
+    const placeholder = document.getElementById('servicePlaceholder');
+    const checkboxes = panel.querySelectorAll('input[type="checkbox"]');
+
+    function renderChips(){
+      chips.innerHTML = '';
+      const checked = Array.from(checkboxes).filter(cb => cb.checked);
+      if (checked.length === 0) {
+        chips.appendChild(placeholder);
+        return;
+      }
+      checked.forEach(cb => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        const label = document.createElement('span');
+        label.textContent = cb.value;
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.setAttribute('aria-label', 'Remove ' + cb.value);
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cb.checked = false;
+          renderChips();
+        });
+        chip.appendChild(label);
+        chip.appendChild(removeBtn);
+        chips.appendChild(chip);
+      });
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', renderChips));
+
+    control.addEventListener('click', () => {
+      const isOpen = wrapper.classList.toggle('open');
+      control.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove('open');
+        control.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    renderChips();
+  })();
+
   function handleBooking(e){
     e.preventDefault();
     const form = e.target;
@@ -751,10 +999,11 @@
     const note = document.getElementById('formNote');
     const original = btn.textContent;
 
-    const dateInput = document.getElementById('date');
+    const year = document.getElementById('dateYear').value;
+    const month = document.getElementById('dateMonth').value;
+    const day = document.getElementById('dateDay').value;
     const dateFormatted = document.getElementById('dateFormatted');
-    if (dateInput.value) {
-      const [year, month, day] = dateInput.value.split('-');
+    if (year && month && day) {
       const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       dateFormatted.value = `${parseInt(day, 10)} ${monthNames[parseInt(month, 10) - 1]} ${year}`;
     } else {
