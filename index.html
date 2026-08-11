@@ -388,6 +388,18 @@
   .field select option{color:#111;}
   .field input::placeholder{color:rgba(246,242,232,0.32);}
   .field input:focus, .field select:focus{border-bottom-color:var(--gold-light);}
+  .service-checks{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px 16px;
+  }
+  .check-item{
+    display:flex; align-items:center; gap:9px;
+    font-size:0.88rem; color:rgba(246,242,232,0.82);
+    cursor:pointer;
+  }
+  .check-item input[type="checkbox"]{
+    width:16px; height:16px; flex:none; accent-color:var(--gold);
+    cursor:pointer;
+  }
   .voucher .btn-gold{width:100%; justify-content:center; margin-top:10px; padding:14px 22px;}
   .form-note{font-size:0.76rem; color:rgba(246,242,232,0.42); margin-top:16px; text-align:center; letter-spacing:0.02em;}
 
@@ -423,6 +435,7 @@
     section{padding:70px 0;}
     .hero-ctas{flex-direction:column; align-items:stretch;}
     .hero-trust div{flex:1 1 45%; margin-bottom:14px;}
+    .service-checks{grid-template-columns:1fr;}
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -692,22 +705,22 @@
             <input id="phone" name="phone" type="tel" placeholder="(555) 000-0000" required>
           </div>
           <div class="field">
-            <label for="service">Service needed</label>
-            <select id="service" name="service" required>
-              <option value="" disabled selected>Choose a service</option>
-              <option>Oil Change (Full Vehicle Check)</option>
-              <option>Transmission Service</option>
-              <option>AWD System Service</option>
-              <option>Differential Service</option>
-              <option>Fluid Service</option>
-              <option>Engine &amp; Cabin Air Filter</option>
-              <option>Spark Plugs</option>
-              <option>Not sure — need advice</option>
-            </select>
+            <label>Service(s) needed</label>
+            <div class="service-checks">
+              <label class="check-item"><input type="checkbox" name="services" value="Oil Change (Full Vehicle Check)"><span>Oil Change (Full Vehicle Check)</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Transmission Service"><span>Transmission Service</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="AWD System Service"><span>AWD System Service</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Differential Service"><span>Differential Service</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Fluid Service"><span>Fluid Service</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Engine &amp; Cabin Air Filter"><span>Engine &amp; Cabin Air Filter</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Spark Plugs"><span>Spark Plugs</span></label>
+              <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
+            </div>
           </div>
           <div class="field">
             <label for="date">Preferred date</label>
-            <input id="date" name="date" type="date">
+            <input id="date" type="date">
+            <input type="hidden" id="dateFormatted" name="date">
           </div>
           <input type="hidden" name="_subject" value="New Reservation Request — OilWrench Auto Care">
           <input type="hidden" name="_template" value="table">
@@ -737,6 +750,16 @@
     const btn = form.querySelector('button[type="submit"]');
     const note = document.getElementById('formNote');
     const original = btn.textContent;
+
+    const dateInput = document.getElementById('date');
+    const dateFormatted = document.getElementById('dateFormatted');
+    if (dateInput.value) {
+      const [year, month, day] = dateInput.value.split('-');
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      dateFormatted.value = `${parseInt(day, 10)} ${monthNames[parseInt(month, 10) - 1]} ${year}`;
+    } else {
+      dateFormatted.value = '';
+    }
 
     btn.disabled = true;
     btn.textContent = 'Sending…';
