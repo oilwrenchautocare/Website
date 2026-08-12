@@ -289,21 +289,124 @@
   }
   .band-item span{font-size:0.8rem; color:rgba(246,242,232,0.62); letter-spacing:0.03em;}
 
+  /* ===== Pricing-Deals Divider ===== */
+  .section-divider{
+    background:var(--navy-black);
+    color:var(--paper);
+    padding:52px 0;
+    text-align:center;
+    position:relative;
+  }
+  .section-divider::before{
+    content:'';
+    display:block;
+    width:56px; height:3px;
+    margin:0 auto 22px;
+    background:linear-gradient(90deg, var(--gold-light), var(--gold-deep));
+    border-radius:2px;
+  }
+  .section-divider .divider-kicker{
+    font-family:'JetBrains Mono', monospace; font-size:0.72rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--gold-light);
+  }
+  .section-divider h3{
+    font-family:'Playfair Display', serif; font-size:clamp(1.4rem, 2.4vw, 1.9rem);
+    margin:12px 0 10px; color:var(--paper);
+  }
+  .section-divider p{
+    color:rgba(246,242,232,0.68); font-size:0.96rem; line-height:1.6;
+    max-width:520px; margin:0 auto;
+  }
+
   /* ===== Process ===== */
   .process{background:var(--paper-dim);}
 
   /* ===== Pricing ===== */
   .pricing{background:var(--paper-dim);}
-  .pricing-placeholder{
-    max-width:640px; margin:0 auto; text-align:center;
+  .pricing-tiers{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .pricing-tier{
     background:var(--paper);
-    border:1px dashed rgba(11,27,54,0.25);
-    padding:48px 32px;
+    border:1px solid var(--hair);
+    padding:32px 26px;
   }
-  .pricing-placeholder p{
-    color:var(--ink-soft); font-size:0.98rem; line-height:1.6;
-    max-width:480px; margin:0 auto 8px;
+  .pricing-tier.featured{
+    border-color:var(--gold);
+    box-shadow:0 8px 24px rgba(11,27,54,0.08);
   }
+  .pricing-tier .tier-tag{
+    font-family:'JetBrains Mono', monospace; font-size:0.7rem;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+  .pricing-tier h3{
+    font-family:'Playfair Display', serif; font-size:1.3rem;
+    margin:8px 0 10px; color:var(--navy-deep);
+  }
+  .pricing-tier .tier-desc{
+    color:var(--ink-soft); font-size:0.86rem; line-height:1.55;
+    margin-bottom:22px; min-height:44px;
+  }
+  .tier-subsection{
+    border-top:1px solid var(--hair); padding-top:16px; margin-top:16px;
+  }
+  .tier-subsection:first-of-type{border-top:none; padding-top:0; margin-top:0;}
+  .tier-subsection h4{
+    font-family:'JetBrains Mono', monospace; font-size:0.72rem;
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--navy-deep); margin-bottom:8px;
+  }
+  .tier-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-size:0.92rem; color:var(--ink-soft);
+  }
+  .tier-row strong{
+    font-family:'Playfair Display', serif; font-size:1.15rem;
+    color:var(--navy-deep); font-weight:600;
+  }
+  .pricing-note{
+    text-align:center; color:var(--ink-soft); font-size:0.9rem;
+    margin-top:32px; max-width:560px; margin-left:auto; margin-right:auto;
+  }
+  .extra-pricing-grid{
+    max-width:760px; margin:0 auto;
+    border:1px solid var(--hair);
+    background:var(--paper);
+  }
+  .extra-pricing-item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 26px;
+    border-bottom:1px solid var(--hair);
+  }
+  .extra-pricing-item:last-child{border-bottom:none;}
+  .extra-pricing-item .service-name{
+    font-family:'Inter', sans-serif; font-weight:600; font-size:0.96rem;
+    color:var(--navy-deep);
+  }
+  .extra-pricing-item .service-tag{
+    display:block; font-family:'JetBrains Mono', monospace; font-size:0.68rem;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-deep);
+    margin-bottom:3px;
+  }
+  .extra-pricing-item .service-price{
+    font-family:'JetBrains Mono', monospace; font-size:0.82rem;
+    color:var(--ink-soft); white-space:nowrap; margin-left:16px;
+  }
+  .tax-badge{
+    display:flex; align-items:center; gap:10px;
+    justify-content:center;
+    max-width:420px; margin:0 auto 40px;
+    background:linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+    color:var(--navy-black);
+    padding:12px 22px;
+    border-radius:999px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem; letter-spacing:0.03em; font-weight:600;
+    box-shadow:0 8px 20px rgba(200,164,92,0.35);
+  }
+  .tax-badge svg{width:18px; height:18px; flex:none;}
 
   /* ===== Courtesies ===== */
   .courtesies{background:var(--paper);}
@@ -549,6 +652,9 @@
     .seal-wrap{order:-1; margin-bottom:20px;}
     .seal-frame{max-width:280px;}
     .service-grid{grid-template-columns:repeat(2,1fr);}
+    .pricing-tiers{grid-template-columns:1fr; gap:20px;}
+    .extra-pricing-item{flex-direction:column; align-items:flex-start; gap:4px;}
+    .extra-pricing-item .service-price{margin-left:0;}
     .courtesy-grid{grid-template-columns:repeat(2,1fr);}
     .band-grid{grid-template-columns:repeat(2,1fr); gap:28px;}
     .process-grid{grid-template-columns:1fr;}
@@ -586,6 +692,7 @@
       <a href="#process">Procedures</a>
       <a href="#services">Services</a>
       <a href="#pricing">Pricing</a>
+      <a href="#deals">Deals &amp; Offers</a>
     </nav>
     <a class="btn-gold" href="#book">Make a Reservation</a>
   </div>
@@ -708,29 +815,8 @@
         <a href="#book" class="btn-gold" style="align-self:flex-start; margin-top:6px; padding:10px 18px;">Request a Review</a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ===== Pricing ===== -->
-<section id="pricing" class="pricing">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="kicker dark">Transparent Rates</span>
-      <h2>Pricing, no surprises.</h2>
-      <p>Every quote is confirmed before we start — final pricing depends on your vehicle's make, model, and engine size.</p>
-    </div>
-    <div class="pricing-placeholder">
-      <p>Pricing details for each service are being finalized and will appear here shortly.</p>
-      <p>In the meantime, request a reservation and we'll confirm your exact quote before any work begins.</p>
-      <a href="#book" class="btn-gold" style="margin-top:14px; padding:10px 18px;">Get a Quote</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Complimentary Courtesies ===== -->
-<section class="courtesies">
-  <div class="wrap">
-    <div class="section-head">
+    <div class="section-head" style="margin-top:56px;">
       <span class="kicker dark">On the House</span>
       <h2>Complimentary courtesies, every visit.</h2>
       <p>Small details, handled without being asked — part of every appointment at no extra cost.</p>
@@ -771,6 +857,148 @@
           <p>A complimentary multi-point inspection of belts, fluids, and wear components beneath your vehicle.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Pricing ===== -->
+<section id="pricing" class="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">Transparent Rates</span>
+      <h2>Pricing, no surprises.</h2>
+      <p>Every quote is confirmed before we start — final pricing depends on your vehicle's make, model, and engine size. All prices include tax — what you see is what you pay.</p>
+    </div>
+    <div class="pricing-tiers">
+      <div class="pricing-tier">
+        <span class="tier-tag">Tier One</span>
+        <h3>Regular Oil</h3>
+        <p class="tier-desc">Conventional oil service for everyday driving and routine maintenance intervals.</p>
+        <div class="tier-subsection">
+          <h4>Sedan &amp; SUV</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$69.99</strong></div>
+        </div>
+        <div class="tier-subsection">
+          <h4>Pickup Truck</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$89.99</strong></div>
+        </div>
+      </div>
+
+      <div class="pricing-tier featured">
+        <span class="tier-tag">Tier Two</span>
+        <h3>Synthetic Oil</h3>
+        <p class="tier-desc">Full synthetic formulation for stronger protection and longer service intervals.</p>
+        <div class="tier-subsection">
+          <h4>Sedan &amp; SUV</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$119.99</strong></div>
+        </div>
+        <div class="tier-subsection">
+          <h4>Pickup Truck</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$139.99</strong></div>
+        </div>
+      </div>
+
+      <div class="pricing-tier">
+        <span class="tier-tag">Tier Three</span>
+        <h3>Ultra Premium Oil</h3>
+        <p class="tier-desc">Our top-tier premium synthetic, engineered for maximum performance and engine protection.</p>
+        <div class="tier-subsection">
+          <h4>Sedan &amp; SUV</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$159.99</strong></div>
+        </div>
+        <div class="tier-subsection">
+          <h4>Pickup Truck</h4>
+          <div class="tier-row"><span>Starting at</span><strong>$179.99</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:56px;">
+      <span class="kicker dark">Additional Services</span>
+      <h3 style="font-family:'Playfair Display', serif; font-size:clamp(1.4rem, 2.4vw, 1.8rem); margin-top:0; color:var(--navy-deep);">Every other service we offer.</h3>
+      <p>Starting rates for every other service we offer — final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
+    </div>
+    <div class="extra-pricing-grid">
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Drivetrain</span><span class="service-name">Transmission Service</span></div>
+        <span class="service-price">Starting at $189.99</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Drivetrain</span><span class="service-name">AWD System Service</span></div>
+        <span class="service-price">Starting at $189.99</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Drivetrain</span><span class="service-name">Differential Service</span></div>
+        <span class="service-price">Starting at $189.99</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Fluids</span><span class="service-name">Power Steering Service</span></div>
+        <span class="service-price">Starting at $99.99</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Air &amp; Comfort</span><span class="service-name">Engine &amp; Cabin Air Filter</span></div>
+        <span class="service-price">Depends on vehicle</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Ignition</span><span class="service-name">Spark Plugs</span></div>
+        <span class="service-price">Starting at $209.99</span>
+      </div>
+      <div class="extra-pricing-item">
+        <div><span class="service-tag">Seasonal</span><span class="service-name">Seasonal Tire Change</span></div>
+        <span class="service-price">$50 — Sedan &amp; SUV</span>
+      </div>
+    </div>
+
+    <p class="pricing-note">Rates shown are starting prices and may vary by make, model, and engine size — every quote is confirmed with you before any work begins.</p>
+    <div style="text-align:center; margin-top:24px;">
+      <a href="#book" class="btn-gold" style="padding:10px 18px;">Get a Quote</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Pricing / Deals Divider ===== -->
+<div class="section-divider">
+  <div class="wrap">
+    <span class="divider-kicker">Before You Book</span>
+    <h3>Every listed price already includes tax — check below for ways to save even more.</h3>
+    <p>Reservations booked with an active offer are confirmed at the discounted rate before any work begins, so there's never a surprise on your final invoice.</p>
+  </div>
+</div>
+
+<!-- ===== Deals & Offers ===== -->
+<section id="deals" class="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">Save More</span>
+      <h2>Deals &amp; offers.</h2>
+      <p>Current promotions for OilWrench Auto Care customers — mention an offer when you book to have it applied to your reservation.</p>
+    </div>
+    <div class="courtesy-grid">
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>First Reservation Discount</h4>
+          <p>New customers save $15 off their first booked service with OilWrench.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Seasonal Tire Change Bundle</h4>
+          <p>Save $10 when you pair a seasonal tire change with any oil service in the same visit.</p>
+        </div>
+      </div>
+      <div class="courtesy-item">
+        <div class="courtesy-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <h4>Referral Reward</h4>
+          <p>Refer a friend and you both save $10 on your next reservation — can be combined with other promotions.</p>
+        </div>
+      </div>
+    </div>
+    <p class="pricing-note">Just mention the offer when you book — we'll take care of the rest, no hoops to jump through.</p>
+    <div style="text-align:center; margin-top:24px;">
+      <a href="#book" class="btn-gold" style="padding:10px 18px;">Book &amp; Save</a>
     </div>
   </div>
 </section>
@@ -918,6 +1146,11 @@
               </select>
               <select id="vehicleEngine" name="vehicle_engine" aria-label="Engine size" disabled>
                 <option value="" disabled selected>Select model first</option>
+              </select>
+              <select id="vehicleType" name="vehicle_type" aria-label="Vehicle type">
+                <option value="" disabled selected>Vehicle Type</option>
+                <option>Sedan / SUV</option>
+                <option>Pickup Truck</option>
               </select>
             </div>
             <input type="hidden" id="vehicleModelFinal" name="vehicle_model">
