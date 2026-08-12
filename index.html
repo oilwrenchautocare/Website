@@ -8,22 +8,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #F6F2E8;
-    --paper-dim: #ECE5D3;
-    --navy-black: #070E1C;
-    --navy-deep: #0B1B36;
-    --navy: #14294F;
-    --navy-light: #244073;
-    --steel: #9BA6B4;
+    --paper: #F6F7F9;
+    --paper-dim: #ECEEF2;
+    --navy-black: #0A0C10;
+    --navy-deep: #14171F;
+    --navy: #1C2029;
+    --navy-light: #2B303C;
+    --steel: #8A93A3;
     --steel-light: #C7CED7;
-    --gold-deep: #8C6423;
-    --gold: #D3A24C;
-    --gold-light: #F3D793;
-    --amber: #B4601C;
-    --ink: #14161A;
-    --ink-soft: #4E5262;
-    --hair: rgba(211,162,76,0.28);
-    --line-dark: rgba(246,242,232,0.14);
+    --gold-deep: #C2361A;
+    --gold: #FF5A36;
+    --gold-light: #FF8963;
+    --amber: #FFB020;
+    --ink: #14161C;
+    --ink-soft: #565B6D;
+    --hair: rgba(255,90,54,0.18);
+    --line-dark: rgba(246,247,249,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-card: 0 4px 18px rgba(10,12,16,0.06), 0 1px 3px rgba(10,12,16,0.04);
+    --shadow-lift: 0 20px 45px rgba(10,12,16,0.14);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -36,10 +40,11 @@
     overflow-x:hidden;
   }
   h1,h2,h3,h4{
-    font-family:'Playfair Display', serif;
+    font-family:'Inter', sans-serif;
     color:var(--navy-deep);
-    line-height:1.12;
-    font-weight:600;
+    line-height:1.15;
+    font-weight:800;
+    letter-spacing:-0.02em;
   }
   .mono{font-family:'JetBrains Mono', monospace;}
   a{color:inherit; text-decoration:none;}
@@ -50,21 +55,25 @@
   .kicker{
     font-family:'JetBrains Mono', monospace;
     font-size:0.72rem;
-    letter-spacing:0.24em;
+    letter-spacing:0.18em;
     text-transform:uppercase;
     color:var(--gold);
     display:inline-flex; align-items:center; gap:10px;
+    background:rgba(255,90,54,0.1);
+    padding:6px 14px 6px 10px;
+    border-radius:999px;
   }
   .kicker::before{
-    content:""; width:26px; height:1px; background:var(--gold);
+    content:""; width:16px; height:1px; background:var(--gold);
   }
-  .kicker.dark{color:var(--gold-deep);}
+  .kicker.dark{color:var(--gold-deep); background:rgba(255,90,54,0.08);}
 
   /* ===== Top bar ===== */
   .topbar{
     position:sticky; top:0; z-index:50;
-    background:var(--navy-black);
-    border-bottom:1px solid var(--hair);
+    background:rgba(10,12,16,0.85);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-dark);
   }
   .topbar-inner{
     display:flex; align-items:center; justify-content:space-between;
@@ -74,12 +83,13 @@
   .brand{
     display:flex; align-items:center; gap:14px;
   }
-  .brand img{width:48px; height:48px; border-radius:50%; box-shadow:0 0 0 1px var(--hair); flex:none;}
+  .brand img{width:44px; height:44px; border-radius:12px; box-shadow:0 0 0 1px var(--hair), var(--shadow-card); flex:none;}
   .brand .word{
-    font-family:'Playfair Display', serif;
+    font-family:'Inter', sans-serif;
+    font-weight:800;
     color:var(--paper);
     font-size:1.05rem;
-    letter-spacing:0.03em;
+    letter-spacing:-0.01em;
     line-height:1.1;
   }
   .brand .word small{
@@ -87,51 +97,51 @@
     font-size:0.6rem; letter-spacing:0.24em; color:var(--gold-light);
     text-transform:uppercase; margin-top:2px;
   }
-  nav.primary-nav{display:flex; gap:34px;}
+  nav.primary-nav{display:flex; gap:8px;}
   nav.primary-nav a{
-    color:rgba(246,242,232,0.78);
-    font-size:0.78rem; letter-spacing:0.12em;
+    color:rgba(246,247,249,0.78);
+    font-size:0.78rem; letter-spacing:0.04em;
     text-transform:uppercase;
-    font-weight:500;
-    padding:6px 2px;
-    border-bottom:1px solid transparent;
-    transition:opacity .2s, border-color .2s, color .2s;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid transparent;
+    transition:background .2s, color .2s;
   }
-  nav.primary-nav a:hover{color:var(--gold-light); border-color:var(--gold);}
+  nav.primary-nav a:hover{color:var(--paper); background:rgba(255,90,54,0.16);}
   .btn-gold{
     display:inline-flex; align-items:center; gap:8px;
-    background:linear-gradient(180deg, var(--gold-light), var(--gold) 55%, var(--gold-deep));
-    color:var(--navy-black);
+    background:linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-deep));
+    color:#fff;
     font-weight:700;
     font-size:0.78rem;
-    letter-spacing:0.08em;
+    letter-spacing:0.04em;
     text-transform:uppercase;
-    padding:12px 22px;
-    border-radius:1px;
-    box-shadow:0 1px 0 rgba(255,255,255,0.4) inset, 0 6px 16px rgba(140,100,35,0.28);
-    transition:filter .2s, transform .2s;
+    padding:13px 24px;
+    border-radius:999px;
+    box-shadow:0 8px 20px rgba(255,90,54,0.32);
+    transition:filter .2s, transform .2s, box-shadow .2s;
   }
-  .btn-gold:hover{filter:brightness(1.06); transform:translateY(-1px);}
+  .btn-gold:hover{filter:brightness(1.05); transform:translateY(-2px); box-shadow:0 12px 26px rgba(255,90,54,0.4);}
 
   /* ===== Hero ===== */
   .hero{
     position:relative;
     background:
-      radial-gradient(ellipse at 78% 12%, rgba(211,162,76,0.14), transparent 46%),
-      radial-gradient(ellipse at 10% 90%, rgba(36,64,115,0.35), transparent 55%),
-      linear-gradient(165deg, var(--navy-black) 0%, var(--navy-deep) 62%, var(--navy) 100%);
+      radial-gradient(ellipse at 80% 0%, rgba(255,90,54,0.18), transparent 50%),
+      radial-gradient(ellipse at 0% 100%, rgba(255,90,54,0.08), transparent 55%),
+      linear-gradient(160deg, var(--navy-black) 0%, var(--navy-deep) 55%, var(--navy) 100%);
     color:var(--paper);
-    padding:110px 0 120px;
+    padding:120px 0 130px;
     overflow:hidden;
-    border-bottom:1px solid var(--hair);
   }
   .hero::before{
     content:"";
     position:absolute; inset:0;
     background-image:
-      linear-gradient(rgba(246,242,232,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(246,242,232,0.025) 1px, transparent 1px);
-    background-size:64px 64px;
+      linear-gradient(rgba(246,247,249,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(246,247,249,0.02) 1px, transparent 1px);
+    background-size:56px 56px;
     pointer-events:none;
   }
   .hero-grid{
@@ -145,44 +155,45 @@
     color:var(--paper);
     font-size:clamp(2.5rem, 4.3vw, 3.9rem);
     margin:20px 0 22px;
-    font-weight:600;
+    font-weight:800;
   }
   .hero h1 em{
-    font-style:italic;
-    background:linear-gradient(180deg, var(--gold-light), var(--gold));
+    font-style:normal;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
   .hero p.lede{
-    font-size:1.12rem;
-    color:rgba(246,242,232,0.76);
+    font-size:1.14rem;
+    color:rgba(246,247,249,0.76);
     max-width:46ch;
     margin-bottom:34px;
     font-weight:400;
   }
   .hero-ctas{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:40px; align-items:center;}
   .btn-outline-light{
-    border:1px solid rgba(246,242,232,0.32);
+    border:1px solid rgba(246,247,249,0.28);
     color:var(--paper);
-    padding:11px 24px;
-    font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase;
-    font-weight:600;
-    transition:border-color .2s, background .2s;
+    padding:12px 24px;
+    font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase;
+    font-weight:700;
+    border-radius:999px;
+    transition:border-color .2s, background .2s, transform .2s;
   }
-  .btn-outline-light:hover{border-color:var(--gold-light); background:rgba(255,255,255,0.04);}
+  .btn-outline-light:hover{border-color:var(--gold-light); background:rgba(255,255,255,0.06); transform:translateY(-2px);}
   .hero-trust{
     display:flex; gap:0; flex-wrap:wrap;
     padding-top:26px; border-top:1px solid var(--line-dark);
   }
   .hero-trust div{
-    font-size:0.76rem; color:rgba(246,242,232,0.6);
+    font-size:0.76rem; color:rgba(246,247,249,0.6);
     padding-right:34px; margin-right:34px;
     border-right:1px solid var(--line-dark);
     letter-spacing:0.02em;
   }
   .hero-trust div:last-child{border-right:none; margin-right:0; padding-right:0;}
   .hero-trust strong{
-    display:block; font-family:'Playfair Display',serif; color:var(--gold-light);
-    font-size:1.7rem; font-weight:600; letter-spacing:0;
+    display:block; font-family:'Inter',sans-serif; color:var(--gold-light);
+    font-size:1.7rem; font-weight:800; letter-spacing:-0.02em;
   }
 
   /* Signature: emblem seal */
@@ -195,35 +206,32 @@
     width:100%;
     max-width:400px;
     aspect-ratio:1;
-    border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, rgba(211,162,76,0.10), transparent 60%), rgba(246,242,232,0.03);
-    border:1px solid var(--hair);
+    border-radius:28px;
+    background:radial-gradient(circle at 35% 30%, rgba(255,90,54,0.14), transparent 60%), rgba(246,247,249,0.03);
+    border:1px solid var(--line-dark);
     display:flex; align-items:center; justify-content:center;
-    padding:28px;
+    padding:16px;
+    box-shadow:var(--shadow-lift);
   }
-  .seal-ring{
-    position:absolute; inset:14px;
-    border-radius:50%;
-    border:1px dashed rgba(211,162,76,0.35);
-    animation:spin 40s linear infinite;
-  }
-  @keyframes spin{ to{ transform:rotate(360deg);} }
+  .seal-ring{display:none;}
   .seal-inner{
-    width:78%; height:78%;
-    border-radius:50%;
+    width:100%; height:100%;
+    border-radius:20px;
     overflow:hidden;
-    box-shadow:0 0 0 1px var(--hair), 0 20px 60px rgba(0,0,0,0.45);
+    box-shadow:0 0 0 1px var(--line-dark);
   }
   .seal-inner img{width:100%; height:100%; object-fit:cover;}
   .seal-caption{
-    position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
-    background:var(--navy-black);
-    border:1px solid var(--hair);
-    padding:8px 18px;
+    position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:#fff;
+    padding:9px 20px;
+    border-radius:999px;
     font-family:'JetBrains Mono', monospace;
-    font-size:0.65rem; letter-spacing:0.16em; text-transform:uppercase;
-    color:var(--gold-light);
+    font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase;
+    font-weight:700;
     white-space:nowrap;
+    box-shadow:0 10px 24px rgba(255,90,54,0.35);
   }
 
   /* ===== Section shell ===== */
@@ -232,78 +240,92 @@
   .section-head h2{font-size:clamp(1.9rem, 3vw, 2.5rem); margin-top:16px;}
   .section-head p{color:var(--ink-soft); font-size:1.02rem; margin-top:16px; max-width:52ch;}
   .section-head.on-dark h2{color:var(--paper);}
-  .section-head.on-dark p{color:rgba(246,242,232,0.68);}
+  .section-head.on-dark p{color:rgba(246,247,249,0.68);}
 
   /* ===== Services ===== */
   .services{background:var(--paper);}
   .service-grid{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
-    gap:1px;
-    background:var(--hair);
-    border:1px solid var(--hair);
+    gap:20px;
   }
   .service-card{
-    background:var(--paper);
-    padding:36px 28px;
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:32px 26px;
     display:flex; flex-direction:column; gap:16px;
     min-height:236px;
-    transition:background .25s;
+    transition:transform .25s, box-shadow .25s;
   }
-  .service-card:hover{background:var(--paper-dim);}
+  .service-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lift);}
   .service-icon-wrap{
-    width:44px; height:44px;
-    border-radius:50%;
+    width:48px; height:48px;
+    border-radius:14px;
     display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(180deg, var(--navy), var(--navy-deep));
-    box-shadow:0 0 0 1px var(--hair);
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    box-shadow:0 8px 18px rgba(255,90,54,0.28);
   }
-  .service-icon-wrap svg{width:22px; height:22px; color:var(--gold-light);}
-  .service-card h3{font-size:1.08rem; color:var(--navy-deep); font-weight:600;}
+  .service-icon-wrap svg{width:22px; height:22px; color:#fff;}
+  .service-card h3{font-size:1.08rem; color:var(--navy-deep); font-weight:700;}
   .service-card p{font-size:0.89rem; color:var(--ink-soft); flex-grow:1;}
   .service-card .tag{
     font-family:'JetBrains Mono', monospace;
-    font-size:0.66rem; letter-spacing:0.14em;
+    font-size:0.66rem; letter-spacing:0.1em;
     color:var(--gold-deep); text-transform:uppercase;
   }
-  .service-card.feature{background:var(--navy-deep);}
+  .service-card.feature{background:var(--navy-deep); box-shadow:var(--shadow-card);}
   .service-card.feature h3{color:var(--paper);}
-  .service-card.feature p{color:rgba(246,242,232,0.72);}
+  .service-card.feature p{color:rgba(246,247,249,0.72);}
   .service-card.feature .tag{color:var(--gold-light);}
+  .review-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    background:var(--navy-deep);
+    border-radius:var(--radius);
+    padding:30px 34px;
+    margin-top:20px;
+    box-shadow:var(--shadow-card);
+  }
+  .review-banner .review-text h3{
+    color:var(--paper); font-size:1.05rem; font-weight:700;
+    font-family:'Inter', sans-serif; margin-bottom:4px;
+  }
+  .review-banner .review-text p{
+    color:rgba(246,247,249,0.72); font-size:0.88rem; margin:0;
+  }
+  .review-banner .btn-gold{flex:none;}
 
   /* ===== Stats band ===== */
   .band{
     background:var(--navy-black);
     color:var(--paper);
     padding:70px 0;
-    border-top:1px solid var(--hair);
-    border-bottom:1px solid var(--hair);
   }
   .band-grid{
     display:grid; grid-template-columns:repeat(4,1fr); gap:32px;
   }
-  .band-item{border-left:1px solid var(--line-dark); padding-left:24px;}
+  .band-item{border-left:2px solid var(--gold); padding-left:24px;}
   .band-item strong{
-    display:block; font-family:'Playfair Display', serif;
-    font-size:2.5rem; font-weight:600; color:var(--gold-light); letter-spacing:0;
+    display:block; font-family:'Inter', sans-serif;
+    font-size:2.5rem; font-weight:800; color:var(--gold-light); letter-spacing:-0.02em;
   }
-  .band-item span{font-size:0.8rem; color:rgba(246,242,232,0.62); letter-spacing:0.03em;}
+  .band-item span{font-size:0.8rem; color:rgba(246,247,249,0.62); letter-spacing:0.03em;}
 
   /* ===== Pricing-Deals Divider ===== */
   .section-divider{
     background:var(--navy-black);
     color:var(--paper);
-    padding:52px 0;
+    padding:56px 0;
     text-align:center;
     position:relative;
   }
   .section-divider::before{
     content:'';
     display:block;
-    width:56px; height:3px;
+    width:56px; height:4px;
     margin:0 auto 22px;
     background:linear-gradient(90deg, var(--gold-light), var(--gold-deep));
-    border-radius:2px;
+    border-radius:99px;
   }
   .section-divider .divider-kicker{
     font-family:'JetBrains Mono', monospace; font-size:0.72rem;
@@ -311,11 +333,11 @@
     color:var(--gold-light);
   }
   .section-divider h3{
-    font-family:'Playfair Display', serif; font-size:clamp(1.4rem, 2.4vw, 1.9rem);
+    font-family:'Inter', sans-serif; font-weight:800; font-size:clamp(1.4rem, 2.4vw, 1.9rem);
     margin:12px 0 10px; color:var(--paper);
   }
   .section-divider p{
-    color:rgba(246,242,232,0.68); font-size:0.96rem; line-height:1.6;
+    color:rgba(246,247,249,0.68); font-size:0.96rem; line-height:1.6;
     max-width:520px; margin:0 auto;
   }
 
@@ -328,21 +350,36 @@
     display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
   }
   .pricing-tier{
-    background:var(--paper);
-    border:1px solid var(--hair);
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
     padding:32px 26px;
   }
   .pricing-tier.featured{
-    border-color:var(--gold);
-    box-shadow:0 8px 24px rgba(11,27,54,0.08);
+    box-shadow:0 0 0 2px var(--gold), var(--shadow-lift);
+    position:relative;
+    overflow:visible;
   }
+  .most-chosen-badge{
+    position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    display:inline-flex; align-items:center; gap:5px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    padding:5px 14px;
+    border-radius:999px;
+    box-shadow:0 8px 16px rgba(255,90,54,0.35);
+    white-space:nowrap;
+  }
+  .most-chosen-badge svg{width:11px; height:11px;}
   .pricing-tier .tier-tag{
     font-family:'JetBrains Mono', monospace; font-size:0.7rem;
-    letter-spacing:0.12em; text-transform:uppercase;
+    letter-spacing:0.1em; text-transform:uppercase;
     color:var(--gold-deep);
   }
   .pricing-tier h3{
-    font-family:'Playfair Display', serif; font-size:1.3rem;
+    font-family:'Inter', sans-serif; font-weight:800; font-size:1.3rem;
     margin:8px 0 10px; color:var(--navy-deep);
   }
   .pricing-tier .tier-desc{
@@ -350,7 +387,7 @@
     margin-bottom:22px; min-height:44px;
   }
   .tier-subsection{
-    border-top:1px solid var(--hair); padding-top:16px; margin-top:16px;
+    border-top:1px solid var(--paper-dim); padding-top:16px; margin-top:16px;
   }
   .tier-subsection:first-of-type{border-top:none; padding-top:0; margin-top:0;}
   .tier-subsection h4{
@@ -363,36 +400,38 @@
     font-size:0.92rem; color:var(--ink-soft);
   }
   .tier-row strong{
-    font-family:'Playfair Display', serif; font-size:1.15rem;
-    color:var(--navy-deep); font-weight:600;
+    font-family:'Inter', sans-serif; font-size:1.15rem;
+    color:var(--navy-deep); font-weight:800;
   }
   .pricing-note{
     text-align:center; color:var(--ink-soft); font-size:0.9rem;
     margin-top:32px; max-width:560px; margin-left:auto; margin-right:auto;
   }
   .extra-pricing-grid{
-    max-width:760px; margin:0 auto;
-    border:1px solid var(--hair);
-    background:var(--paper);
+    display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
+    max-width:none;
   }
   .extra-pricing-item{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 26px;
-    border-bottom:1px solid var(--hair);
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:26px 22px;
+    display:flex; flex-direction:column; gap:14px;
+    transition:transform .25s, box-shadow .25s;
   }
-  .extra-pricing-item:last-child{border-bottom:none;}
+  .extra-pricing-item:hover{transform:translateY(-4px); box-shadow:var(--shadow-lift);}
   .extra-pricing-item .service-name{
-    font-family:'Inter', sans-serif; font-weight:600; font-size:0.96rem;
+    font-family:'Inter', sans-serif; font-weight:700; font-size:0.98rem;
     color:var(--navy-deep);
   }
   .extra-pricing-item .service-tag{
-    display:block; font-family:'JetBrains Mono', monospace; font-size:0.68rem;
-    letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-deep);
-    margin-bottom:3px;
+    display:inline-block; font-family:'JetBrains Mono', monospace; font-size:0.66rem;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-deep);
   }
   .extra-pricing-item .service-price{
-    font-family:'JetBrains Mono', monospace; font-size:0.82rem;
-    color:var(--ink-soft); white-space:nowrap; margin-left:16px;
+    font-family:'JetBrains Mono', monospace; font-size:0.86rem; font-weight:600;
+    color:var(--navy-deep); white-space:normal; margin-left:0; margin-top:auto;
+    padding-top:14px; border-top:1px solid var(--paper-dim);
   }
   .tax-badge{
     display:flex; align-items:center; gap:10px;
@@ -404,50 +443,55 @@
     border-radius:999px;
     font-family:'JetBrains Mono', monospace;
     font-size:0.82rem; letter-spacing:0.03em; font-weight:600;
-    box-shadow:0 8px 20px rgba(200,164,92,0.35);
+    box-shadow:0 8px 20px rgba(255,90,54,0.35);
   }
   .tax-badge svg{width:18px; height:18px; flex:none;}
 
   /* ===== Courtesies ===== */
   .courtesies{background:var(--paper);}
   .courtesy-grid{
-    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
   }
   .courtesy-item{
     display:flex; align-items:flex-start; gap:16px;
-    background:var(--paper-dim);
-    border:1px solid var(--hair);
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
     padding:26px 24px;
   }
   .courtesy-icon{
-    flex:none; width:30px; height:30px;
-    border-radius:50%;
+    flex:none; width:32px; height:32px;
+    border-radius:10px;
     display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
-    color:var(--navy-black);
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:#fff;
+    box-shadow:0 6px 14px rgba(255,90,54,0.28);
   }
   .courtesy-icon svg{width:16px; height:16px;}
   .courtesy-item h4{
-    font-family:'Inter', sans-serif; font-weight:600; font-size:0.98rem;
+    font-family:'Inter', sans-serif; font-weight:700; font-size:0.98rem;
     color:var(--navy-deep); margin-bottom:4px;
   }
   .courtesy-item p{font-size:0.86rem; color:var(--ink-soft); line-height:1.5;}
   .process-grid{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:0;
-    border:1px solid var(--hair);
-    background:var(--hair);
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
   }
   .process-step{
-    background:var(--paper);
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
     padding:40px 32px;
     position:relative;
   }
   .process-step .roman{
     font-family:'JetBrains Mono', monospace;
-    font-size:0.85rem; letter-spacing:0.1em; color:var(--gold-deep);
-    display:block; margin-bottom:16px;
+    font-size:0.85rem; letter-spacing:0.1em; color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:10px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    margin-bottom:18px;
   }
-  .process-step h3{font-size:1.18rem; margin-bottom:12px; font-weight:600;}
+  .process-step h3{font-size:1.18rem; margin-bottom:12px; font-weight:700;}
   .process-step p{color:var(--ink-soft); font-size:0.92rem;}
 
   /* ===== Contact / booking ===== */
@@ -468,66 +512,67 @@
     display:block; font-family:'JetBrains Mono', monospace; font-size:0.7rem;
     letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-light); margin-bottom:6px;
   }
-  .info-row span{color:rgba(246,242,232,0.75); font-size:0.95rem; font-family:'Inter', sans-serif;}
+  .info-row span{color:rgba(246,247,249,0.75); font-size:0.95rem; font-family:'Inter', sans-serif;}
   .hours-table{width:100%; border-collapse:collapse; margin-top:8px;}
-  .hours-table td{padding:5px 0; font-size:0.92rem; color:rgba(246,242,232,0.8);}
+  .hours-table td{padding:5px 0; font-size:0.92rem; color:rgba(246,247,249,0.8);}
   .hours-table td:last-child{text-align:right; font-family:'JetBrains Mono', monospace; color:var(--gold-light);}
 
   .voucher{
     position:relative;
-    background:rgba(246,242,232,0.03);
-    border:1px solid var(--hair);
+    background:rgba(246,247,249,0.04);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-lift);
     padding:2px;
   }
   .voucher-inner{
-    border:1px solid rgba(211,162,76,0.18);
+    border-radius:calc(var(--radius) - 2px);
+    background:rgba(255,255,255,0.02);
     padding:34px;
   }
   .voucher-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:22px;}
   .voucher-head h2{color:var(--paper); font-size:1.55rem;}
-  .voucher-head span{font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:rgba(246,242,232,0.4); letter-spacing:0.1em;}
+  .voucher-head span{font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:rgba(246,247,249,0.4); letter-spacing:0.1em;}
   .field{margin-bottom:20px;}
   .field label{
     display:block; font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase;
-    color:rgba(246,242,232,0.55); margin-bottom:8px; font-family:'JetBrains Mono', monospace;
+    color:rgba(246,247,249,0.55); margin-bottom:8px; font-family:'JetBrains Mono', monospace;
   }
   .field input, .field select{
-    width:100%; padding:12px 4px;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid rgba(246,242,232,0.25);
-    border-radius:0;
+    width:100%; padding:12px 14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'Inter', sans-serif;
     font-size:1rem;
+    transition:border-color .2s, background .2s;
   }
   .field select option{color:#111;}
-  .field input::placeholder{color:rgba(246,242,232,0.32);}
-  .field input:focus, .field select:focus{border-bottom-color:var(--gold-light);}
+  .field input::placeholder{color:rgba(246,247,249,0.32);}
+  .field input:focus, .field select:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
   .date-parts{
     display:flex; align-items:center; gap:6px;
   }
   .date-parts input{
     width:auto; flex:none;
-    padding:12px 2px;
+    padding:12px 6px;
     text-align:center;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid rgba(246,242,232,0.25);
-    border-radius:0;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'JetBrains Mono', monospace;
     font-size:1rem;
     letter-spacing:0.04em;
   }
-  .date-parts input#dateYear{width:4.2ch;}
+  .date-parts input#dateYear{width:4.8ch;}
   .date-parts input#dateMonth,
-  .date-parts input#dateDay{width:2.6ch;}
-  .date-parts input:focus{border-bottom-color:var(--gold-light); outline:none;}
-  .date-sep{color:rgba(246,242,232,0.4); font-family:'JetBrains Mono', monospace;}
+  .date-parts input#dateDay{width:3.2ch;}
+  .date-parts input:focus{border-color:var(--gold-light); outline:none;}
+  .date-sep{color:rgba(246,247,249,0.4); font-family:'JetBrains Mono', monospace;}
 
   .vehicle-subhead{
-    font-family:'Playfair Display', serif; font-size:1.02rem;
+    font-family:'Inter', sans-serif; font-weight:700; font-size:1.02rem;
     color:var(--paper); margin:2px 0 12px;
   }
   .vehicle-grid{
@@ -535,39 +580,37 @@
   }
   .vehicle-grid select,
   .vehicle-grid input{
-    width:100%; padding:12px 4px;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid rgba(246,242,232,0.25);
-    border-radius:0;
+    width:100%; padding:12px 14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'Inter', sans-serif;
     font-size:0.95rem;
+    transition:border-color .2s, background .2s;
   }
   .vehicle-grid select option{color:#111;}
   .vehicle-grid select:focus,
-  .vehicle-grid input:focus{border-bottom-color:var(--gold-light); outline:none;}
-  .vehicle-grid select:disabled{color:rgba(246,242,232,0.32); cursor:not-allowed;}
+  .vehicle-grid input:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
+  .vehicle-grid select:disabled{color:rgba(246,247,249,0.32); cursor:not-allowed;}
   #vehicleModelCustom{
-    width:100%; padding:12px 4px;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid rgba(246,242,232,0.25);
-    border-radius:0;
+    width:100%; padding:12px 14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'Inter', sans-serif;
     font-size:0.95rem;
   }
-  #vehicleModelCustom:focus{border-bottom-color:var(--gold-light); outline:none;}
-  #vehicleModelCustom::placeholder{color:rgba(246,242,232,0.32);}
+  #vehicleModelCustom:focus{border-color:var(--gold-light); outline:none;}
+  #vehicleModelCustom::placeholder{color:rgba(246,247,249,0.32);}
 
   .multiselect{position:relative;}
   .multiselect-control{
-    width:100%; min-height:48px; padding:10px 34px 10px 4px;
-    background:transparent;
-    border:none;
-    border-bottom:1px solid rgba(246,242,232,0.25);
-    border-radius:0;
+    width:100%; min-height:48px; padding:10px 34px 10px 14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'Inter', sans-serif;
     font-size:0.95rem;
@@ -575,16 +618,17 @@
     cursor:pointer;
     position:relative;
     display:flex; align-items:center;
+    transition:border-color .2s;
   }
-  .multiselect-control:focus{outline:none; border-bottom-color:var(--gold-light);}
+  .multiselect-control:focus{outline:none; border-color:var(--gold-light);}
   .multiselect-chips{
     display:flex; flex-wrap:wrap; gap:6px; flex:1;
   }
-  .multiselect-placeholder{color:rgba(246,242,232,0.32);}
+  .multiselect-placeholder{color:rgba(246,247,249,0.32);}
   .chip{
     display:inline-flex; align-items:center; gap:6px;
-    background:rgba(200,164,92,0.14);
-    border:1px solid rgba(200,164,92,0.4);
+    background:rgba(255,90,54,0.14);
+    border:1px solid rgba(255,90,54,0.4);
     color:var(--gold-light);
     font-size:0.78rem;
     padding:4px 8px 4px 10px;
@@ -596,9 +640,9 @@
     display:flex; align-items:center;
   }
   .multiselect-arrow{
-    width:16px; height:16px; position:absolute; right:4px; top:50%;
+    width:16px; height:16px; position:absolute; right:12px; top:50%;
     transform:translateY(-50%);
-    color:rgba(246,242,232,0.5);
+    color:rgba(246,247,249,0.5);
     transition:transform 0.15s ease;
   }
   .multiselect.open .multiselect-arrow{transform:translateY(-50%) rotate(180deg);}
@@ -606,18 +650,18 @@
     display:none;
     position:absolute; left:0; right:0; top:calc(100% + 6px);
     background:var(--navy-deep);
-    border:1px solid rgba(246,242,232,0.18);
-    border-radius:6px;
+    border:1px solid rgba(246,247,249,0.16);
+    border-radius:var(--radius-sm);
     padding:10px 14px;
     z-index:20;
-    box-shadow:0 12px 28px rgba(0,0,0,0.35);
+    box-shadow:var(--shadow-lift);
     max-height:260px;
     overflow-y:auto;
   }
   .multiselect.open .multiselect-panel{display:block;}
   .check-item{
     display:flex; align-items:flex-start; gap:12px;
-    font-size:0.88rem; color:rgba(246,242,232,0.82);
+    font-size:0.88rem; color:rgba(246,247,249,0.82);
     cursor:pointer;
     padding:8px 0;
   }
@@ -631,14 +675,14 @@
     line-height:1.4;
   }
   .voucher .btn-gold{width:100%; justify-content:center; margin-top:10px; padding:14px 22px;}
-  .form-note{font-size:0.76rem; color:rgba(246,242,232,0.42); margin-top:16px; text-align:center; letter-spacing:0.02em;}
+  .form-note{font-size:0.76rem; color:rgba(246,247,249,0.42); margin-top:16px; text-align:center; letter-spacing:0.02em;}
 
   /* ===== Footer ===== */
   footer{
     background:var(--navy-black);
-    color:rgba(246,242,232,0.55);
+    color:rgba(246,247,249,0.55);
     padding:36px 0;
-    border-top:1px solid var(--hair);
+    border-top:1px solid var(--line-dark);
   }
   .footer-inner{
     display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
@@ -653,8 +697,8 @@
     .seal-frame{max-width:280px;}
     .service-grid{grid-template-columns:repeat(2,1fr);}
     .pricing-tiers{grid-template-columns:1fr; gap:20px;}
-    .extra-pricing-item{flex-direction:column; align-items:flex-start; gap:4px;}
-    .extra-pricing-item .service-price{margin-left:0;}
+    .extra-pricing-grid{grid-template-columns:repeat(2,1fr);}
+    .review-banner{flex-direction:column; align-items:flex-start; gap:16px;}
     .courtesy-grid{grid-template-columns:repeat(2,1fr);}
     .band-grid{grid-template-columns:repeat(2,1fr); gap:28px;}
     .process-grid{grid-template-columns:1fr;}
@@ -663,6 +707,7 @@
   }
   @media (max-width: 560px){
     .service-grid{grid-template-columns:1fr;}
+    .extra-pricing-grid{grid-template-columns:1fr;}
     .courtesy-grid{grid-template-columns:1fr;}
     .hero{padding:80px 0 80px;}
     section{padding:70px 0;}
@@ -743,6 +788,52 @@
   </div>
 </section>
 
+<!-- ===== About / Procedures Divider ===== -->
+<div class="section-divider">
+  <div class="wrap">
+    <span class="divider-kicker">How It Works</span>
+    <h3>From first contact to the last torque check, here's what to expect.</h3>
+    <p>No shop visit, no waiting room — just a clear, three-step process from booking to a finished job at your door.</p>
+  </div>
+</div>
+
+<!-- ===== Process ===== -->
+<section id="process" class="process">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">Procedures</span>
+      <h2>Drive in. Drive out. Nothing hidden.</h2>
+      <p>No paperwork maze, no surprise line items — here's precisely what happens the moment we arrive to you.</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step">
+        <span class="roman mono">01</span>
+        <h3>Book your time & location</h3>
+        <p>Schedule online and tell us where to meet you — home, office, or curbside. No shop visit required.</p>
+      </div>
+      <div class="process-step">
+        <span class="roman mono">02</span>
+        <h3>We arrive, fully equipped</h3>
+        <p>Our technician pulls up with every tool and part needed to complete the job right where your vehicle is parked.</p>
+      </div>
+      <div class="process-step">
+        <span class="roman mono">03</span>
+        <h3>Back on the road, without leaving yours</h3>
+        <p>Most services are complete within the hour, with a clear account of the work performed before we drive off.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Procedures / Services Divider ===== -->
+<div class="section-divider">
+  <div class="wrap">
+    <span class="divider-kicker">Now That You Know How It Works</span>
+    <h3>Here's everything we can do for your vehicle.</h3>
+    <p>From routine oil changes to full drivetrain services — take a look at what's included in every visit.</p>
+  </div>
+</div>
+
 <!-- ===== Services ===== -->
 <section id="services" class="services">
   <div class="wrap">
@@ -808,12 +899,14 @@
         <h3>Seasonal Tire Change</h3>
         <p>Swap between summer and winter tire sets, with proper torque and a pressure check on every wheel.</p>
       </div>
+    </div>
 
-      <div class="service-card feature">
+    <div class="review-banner">
+      <div class="review-text">
         <h3>Not sure what you need?</h3>
         <p>Describe the symptom, and we'll diagnose it. No inspection fee on any maintenance visit.</p>
-        <a href="#book" class="btn-gold" style="align-self:flex-start; margin-top:6px; padding:10px 18px;">Request a Review</a>
       </div>
+      <a href="#book" class="btn-gold" style="padding:10px 18px;">Request a Review</a>
     </div>
 
     <div class="section-head" style="margin-top:56px;">
@@ -885,6 +978,10 @@
       </div>
 
       <div class="pricing-tier featured">
+        <span class="most-chosen-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21.5 9l-5 4.87L17.8 21 12 17.6 6.2 21l1.3-7.13-5-4.87 6.6-.74z"/></svg>
+          Most Chosen
+        </span>
         <span class="tier-tag">Tier Two</span>
         <h3>Synthetic Oil</h3>
         <p class="tier-desc">Full synthetic formulation for stronger protection and longer service intervals.</p>
@@ -915,36 +1012,43 @@
 
     <div class="section-head" style="margin-top:56px;">
       <span class="kicker dark">Additional Services</span>
-      <h3 style="font-family:'Playfair Display', serif; font-size:clamp(1.4rem, 2.4vw, 1.8rem); margin-top:0; color:var(--navy-deep);">Every other service we offer.</h3>
+      <h3 style="font-family:'Inter', sans-serif; font-weight:800; font-size:clamp(1.4rem, 2.4vw, 1.8rem); margin-top:0; color:var(--navy-deep);">Every other service we offer.</h3>
       <p>Starting rates for every other service we offer — final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
     </div>
     <div class="extra-pricing-grid">
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Drivetrain</span><span class="service-name">Transmission Service</span></div>
+        <span class="service-tag">Drivetrain</span>
+        <span class="service-name">Transmission Service</span>
         <span class="service-price">Starting at $189.99</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Drivetrain</span><span class="service-name">AWD System Service</span></div>
+        <span class="service-tag">Drivetrain</span>
+        <span class="service-name">AWD System Service</span>
         <span class="service-price">Starting at $189.99</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Drivetrain</span><span class="service-name">Differential Service</span></div>
+        <span class="service-tag">Drivetrain</span>
+        <span class="service-name">Differential Service</span>
         <span class="service-price">Starting at $189.99</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Fluids</span><span class="service-name">Power Steering Service</span></div>
+        <span class="service-tag">Fluids</span>
+        <span class="service-name">Power Steering Service</span>
         <span class="service-price">Starting at $99.99</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Air &amp; Comfort</span><span class="service-name">Engine &amp; Cabin Air Filter</span></div>
+        <span class="service-tag">Air &amp; Comfort</span>
+        <span class="service-name">Engine &amp; Cabin Air Filter</span>
         <span class="service-price">Depends on vehicle</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Ignition</span><span class="service-name">Spark Plugs</span></div>
+        <span class="service-tag">Ignition</span>
+        <span class="service-name">Spark Plugs</span>
         <span class="service-price">Starting at $209.99</span>
       </div>
       <div class="extra-pricing-item">
-        <div><span class="service-tag">Seasonal</span><span class="service-name">Seasonal Tire Change</span></div>
+        <span class="service-tag">Seasonal</span>
+        <span class="service-name">Seasonal Tire Change</span>
         <span class="service-price">$50 — Sedan &amp; SUV</span>
       </div>
     </div>
@@ -1012,34 +1116,6 @@
   </div>
 </div>
 
-<!-- ===== Process ===== -->
-<section id="process" class="process">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="kicker dark">Procedures</span>
-      <h2>Drive in. Drive out. Nothing hidden.</h2>
-      <p>No paperwork maze, no surprise line items — here's precisely what happens the moment we arrive to you.</p>
-    </div>
-    <div class="process-grid">
-      <div class="process-step">
-        <span class="roman mono">01</span>
-        <h3>Book your time & location</h3>
-        <p>Schedule online and tell us where to meet you — home, office, or curbside. No shop visit required.</p>
-      </div>
-      <div class="process-step">
-        <span class="roman mono">02</span>
-        <h3>We arrive, fully equipped</h3>
-        <p>Our technician pulls up with every tool and part needed to complete the job right where your vehicle is parked.</p>
-      </div>
-      <div class="process-step">
-        <span class="roman mono">03</span>
-        <h3>Back on the road, without leaving yours</h3>
-        <p>Most services are complete within the hour, with a clear account of the work performed before we drive off.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== Contact / Booking ===== -->
 <section id="contact" class="contact">
   <div class="wrap contact-grid">
@@ -1051,21 +1127,21 @@
         <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 9.8 9.8 0 0 0 3.1.5 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 9.8 9.8 0 0 0 .5 3.1 1 1 0 0 1-.25 1l-2.15 2.2z" stroke="currentColor" stroke-width="1.5"/></svg>
         <div>
           <strong>Phone</strong>
-          <span><a href="tel:3439894472" style="color:rgba(246,242,232,0.75);">(343) 989-4472</a></span>
+          <span><a href="tel:3439894472" style="color:rgba(246,247,249,0.75);">(343) 989-4472</a></span>
         </div>
       </div>
       <div class="info-row">
         <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 7l8.5 6 8.5-6" stroke="currentColor" stroke-width="1.5"/></svg>
         <div>
           <strong>Email</strong>
-          <span><a href="mailto:oilwrenchautocare@gmail.com" style="color:rgba(246,242,232,0.75);">oilwrenchautocare@gmail.com</a></span>
+          <span><a href="mailto:oilwrenchautocare@gmail.com" style="color:rgba(246,247,249,0.75);">oilwrenchautocare@gmail.com</a></span>
         </div>
       </div>
       <div class="info-row">
         <svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></svg>
         <div>
           <strong>Instagram</strong>
-          <span><a href="https://www.instagram.com/oilwrenchautocare?igsh=MzEweXQwZjczcGx6&amp;utm_source=qr" target="_blank" rel="noopener" style="color:rgba(246,242,232,0.75);">@oilwrenchautocare</a></span>
+          <span><a href="https://www.instagram.com/oilwrenchautocare?igsh=MzEweXQwZjczcGx6&amp;utm_source=qr" target="_blank" rel="noopener" style="color:rgba(246,247,249,0.75);">@oilwrenchautocare</a></span>
         </div>
       </div>
       <div class="info-row" style="border-bottom:none;">
@@ -1091,7 +1167,7 @@
           <h2>Make a Reservation</h2>
           <span class="mono">No. OWA—001</span>
         </div>
-        <p style="color:rgba(246,242,232,0.6); margin:-10px 0 22px; font-size:0.9rem;">Prefer to talk it through? Call <a href="tel:3439894472" style="color:var(--gold-light); text-decoration:underline;">(343) 989-4472</a> or email <a href="mailto:oilwrenchautocare@gmail.com" style="color:var(--gold-light); text-decoration:underline;">oilwrenchautocare@gmail.com</a>.</p>
+        <p style="color:rgba(246,247,249,0.6); margin:-10px 0 22px; font-size:0.9rem;">Prefer to talk it through? Call <a href="tel:3439894472" style="color:var(--gold-light); text-decoration:underline;">(343) 989-4472</a> or email <a href="mailto:oilwrenchautocare@gmail.com" style="color:var(--gold-light); text-decoration:underline;">oilwrenchautocare@gmail.com</a>.</p>
 
         <form id="bookingForm" onsubmit="handleBooking(event)">
           <div class="field">
