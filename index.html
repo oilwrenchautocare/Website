@@ -354,6 +354,7 @@
     border-radius:var(--radius);
     box-shadow:var(--shadow-card);
     padding:32px 26px;
+    position:relative;
   }
   .pricing-tier.featured{
     box-shadow:0 0 0 2px var(--gold), var(--shadow-lift);
@@ -373,6 +374,30 @@
     white-space:nowrap;
   }
   .most-chosen-badge svg{width:11px; height:11px;}
+
+  /* ===== Add to Reservation buttons ===== */
+  .add-service-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--paper-dim);
+    color:var(--navy-deep);
+    border:none; border-radius:999px;
+    padding:7px 14px 7px 10px;
+    font-family:'Inter', sans-serif; font-size:0.74rem; font-weight:700;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    transition:background .2s, color .2s, transform .15s;
+  }
+  .add-service-btn:hover{transform:translateY(-1px);}
+  .add-service-btn svg{width:13px; height:13px; flex:none;}
+  .add-service-btn.added{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:#fff;
+    box-shadow:0 6px 14px rgba(255,90,54,0.3);
+  }
+  .tier-add-wrap{
+    position:absolute; top:20px; right:20px;
+  }
+  .extra-pricing-item .add-service-btn{align-self:flex-start; margin-top:auto;}
   .pricing-tier .tier-tag{
     font-family:'JetBrains Mono', monospace; font-size:0.7rem;
     letter-spacing:0.1em; text-transform:uppercase;
@@ -418,8 +443,52 @@
     padding:26px 22px;
     display:flex; flex-direction:column; gap:14px;
     transition:transform .25s, box-shadow .25s;
+    cursor:pointer;
   }
-  .extra-pricing-item:hover{transform:translateY(-4px); box-shadow:var(--shadow-lift);}
+  .extra-pricing-item:hover, .extra-pricing-item:focus-visible{transform:translateY(-4px); box-shadow:var(--shadow-lift); outline:none;}
+
+  /* ===== Service Detail Modal ===== */
+  .service-modal-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:200;
+    background:rgba(10,12,16,0.6);
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .service-modal-overlay.open{display:flex;}
+  .service-modal{
+    position:relative;
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-lift);
+    max-width:460px; width:100%;
+    padding:36px 32px 30px;
+  }
+  .service-modal-close{
+    position:absolute; top:16px; right:16px;
+    width:32px; height:32px; border-radius:50%;
+    background:var(--paper-dim);
+    border:none; color:var(--ink-soft);
+    font-size:1.3rem; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .service-modal-close:hover{background:var(--gold); color:#fff;}
+  .service-modal h3{
+    font-family:'Inter', sans-serif; font-weight:800; font-size:1.35rem;
+    margin:10px 0 14px; color:var(--navy-deep);
+  }
+  .service-modal p{color:var(--ink-soft); font-size:0.96rem; line-height:1.6;}
+  .service-modal-footer{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    margin-top:26px; padding-top:20px; border-top:1px solid var(--paper-dim);
+  }
+  .service-modal-price{
+    font-family:'JetBrains Mono', monospace; font-size:0.9rem; font-weight:700;
+    color:var(--navy-deep);
+  }
   .extra-pricing-item .service-name{
     font-family:'Inter', sans-serif; font-weight:700; font-size:0.98rem;
     color:var(--navy-deep);
@@ -964,6 +1033,7 @@
     </div>
     <div class="pricing-tiers">
       <div class="pricing-tier">
+        <div class="tier-add-wrap"><button type="button" class="add-service-btn" data-add-service="Oil Change (Full Vehicle Check)"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button></div>
         <span class="tier-tag">Tier One</span>
         <h3>Regular Oil</h3>
         <p class="tier-desc">Conventional oil service for everyday driving and routine maintenance intervals.</p>
@@ -978,6 +1048,7 @@
       </div>
 
       <div class="pricing-tier featured">
+        <div class="tier-add-wrap"><button type="button" class="add-service-btn" data-add-service="Oil Change (Full Vehicle Check)"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button></div>
         <span class="most-chosen-badge">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21.5 9l-5 4.87L17.8 21 12 17.6 6.2 21l1.3-7.13-5-4.87 6.6-.74z"/></svg>
           Most Chosen
@@ -996,6 +1067,7 @@
       </div>
 
       <div class="pricing-tier">
+        <div class="tier-add-wrap"><button type="button" class="add-service-btn" data-add-service="Oil Change (Full Vehicle Check)"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button></div>
         <span class="tier-tag">Tier Three</span>
         <h3>Ultra Premium Oil</h3>
         <p class="tier-desc">Our top-tier premium synthetic, engineered for maximum performance and engine protection.</p>
@@ -1016,40 +1088,64 @@
       <p>Starting rates for every other service we offer — final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
     </div>
     <div class="extra-pricing-grid">
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="transmission" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Drivetrain</span>
         <span class="service-name">Transmission Service</span>
         <span class="service-price">Starting at $189.99</span>
+        <button type="button" class="add-service-btn" data-add-service="Transmission Service"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="awd" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Drivetrain</span>
         <span class="service-name">AWD System Service</span>
         <span class="service-price">Starting at $189.99</span>
+        <button type="button" class="add-service-btn" data-add-service="AWD System Service"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="differential" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Drivetrain</span>
         <span class="service-name">Differential Service</span>
         <span class="service-price">Starting at $189.99</span>
+        <button type="button" class="add-service-btn" data-add-service="Differential Service"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="powersteering" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Fluids</span>
         <span class="service-name">Power Steering Service</span>
         <span class="service-price">Starting at $99.99</span>
+        <button type="button" class="add-service-btn" data-add-service="Power Steering Service"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="airfilter" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Air &amp; Comfort</span>
         <span class="service-name">Engine &amp; Cabin Air Filter</span>
         <span class="service-price">Depends on vehicle</span>
+        <button type="button" class="add-service-btn" data-add-service="Engine &amp; Cabin Air Filter"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="sparkplugs" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Ignition</span>
         <span class="service-name">Spark Plugs</span>
         <span class="service-price">Starting at $209.99</span>
+        <button type="button" class="add-service-btn" data-add-service="Spark Plugs"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
-      <div class="extra-pricing-item">
+      <div class="extra-pricing-item" data-service="tirechange" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Seasonal</span>
         <span class="service-name">Seasonal Tire Change</span>
         <span class="service-price">$50 — Sedan &amp; SUV</span>
+        <button type="button" class="add-service-btn" data-add-service="Seasonal Tire Change"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
+      </div>
+    </div>
+
+    <!-- ===== Service Detail Modal ===== -->
+    <div class="service-modal-overlay" id="serviceModalOverlay">
+      <div class="service-modal" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle">
+        <button type="button" class="service-modal-close" id="serviceModalClose" aria-label="Close">&times;</button>
+        <span class="service-tag" id="serviceModalTag"></span>
+        <h3 id="serviceModalTitle"></h3>
+        <p id="serviceModalDesc"></p>
+        <div class="service-modal-footer">
+          <span class="service-modal-price" id="serviceModalPrice"></span>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button type="button" class="add-service-btn" id="serviceModalAdd"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
+            <a href="#book" class="btn-gold" style="padding:11px 22px;">Go to Form</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1660,6 +1756,143 @@
       opt.textContent = y;
       yearSelect.appendChild(opt);
     }
+  })();
+
+  // Additional Services: click to open detail modal
+  (function(){
+    const serviceInfo = {
+      transmission: {
+        tag: 'Drivetrain',
+        title: 'Transmission Service',
+        price: 'Starting at $189.99',
+        value: 'Transmission Service',
+        desc: "A full transmission fluid exchange — old fluid is drained and replaced with fresh, manufacturer-spec fluid to keep gear shifts smooth and reduce long-term wear. Like most of our drivetrain services, this is fundamentally a fluid service: fresh fluid is what keeps the internal components properly lubricated and cooled."
+      },
+      awd: {
+        tag: 'Drivetrain',
+        title: 'AWD System Service',
+        price: 'Starting at $189.99',
+        value: 'AWD System Service',
+        desc: "A transfer case and differential fluid service for all-wheel-drive vehicles. As with our other drivetrain work, this comes down to replacing the fluid that keeps your AWD hardware running true — old, worn fluid is exchanged for fresh fluid to reduce wear on the system's internal components."
+      },
+      differential: {
+        tag: 'Drivetrain',
+        title: 'Differential Service',
+        price: 'Starting at $189.99',
+        value: 'Differential Service',
+        desc: "A fluid exchange for your vehicle's front, rear, or center differential. This is a straightforward fluid service — draining the old gear oil and refilling with fresh, spec-correct fluid to reduce wear and keep power delivery smooth to the wheels."
+      },
+      powersteering: {
+        tag: 'Fluids',
+        title: 'Power Steering Service',
+        price: 'Starting at $99.99',
+        value: 'Power Steering Service',
+        desc: "Your power steering fluid is checked, topped up, or fully flushed and replaced to manufacturer spec. Fresh fluid keeps the steering system responsive and helps prevent premature wear on the pump and steering components."
+      },
+      airfilter: {
+        tag: 'Air & Comfort',
+        title: 'Engine & Cabin Air Filter',
+        price: 'Depends on vehicle',
+        value: 'Engine & Cabin Air Filter',
+        desc: "Unlike our fluid-based drivetrain services, this one is a physical filter swap. A clean engine air filter improves airflow and fuel economy, and a fresh cabin filter keeps the air inside your vehicle cleaner. Pricing depends on your vehicle's specific filter parts — request a quote for an exact rate."
+      },
+      sparkplugs: {
+        tag: 'Ignition',
+        title: 'Spark Plugs',
+        price: 'Starting at $209.99',
+        value: 'Spark Plugs',
+        desc: "Precise replacement of your vehicle's spark plugs for smoother starts, a steadier idle, and more consistent performance. This is a physical parts replacement rather than a fluid service, and pricing reflects the parts and labour involved."
+      },
+      tirechange: {
+        tag: 'Seasonal',
+        title: 'Seasonal Tire Change',
+        price: '$50 — Sedan & SUV',
+        value: 'Seasonal Tire Change',
+        desc: "Swapping between your summer and winter tire sets, with every wheel properly torqued to spec and pressure-checked before you drive off. Currently available for sedans and SUVs."
+      }
+    };
+
+    const items = document.querySelectorAll('.extra-pricing-item[data-service]');
+    const overlay = document.getElementById('serviceModalOverlay');
+    const closeBtn = document.getElementById('serviceModalClose');
+    const modalTag = document.getElementById('serviceModalTag');
+    const modalTitle = document.getElementById('serviceModalTitle');
+    const modalDesc = document.getElementById('serviceModalDesc');
+    const modalPrice = document.getElementById('serviceModalPrice');
+    const modalAddBtn = document.getElementById('serviceModalAdd');
+
+    function openModal(key){
+      const info = serviceInfo[key];
+      if (!info) return;
+      modalTag.textContent = info.tag;
+      modalTitle.textContent = info.title;
+      modalDesc.textContent = info.desc;
+      modalPrice.textContent = info.price;
+      modalAddBtn.dataset.addService = info.value;
+      syncAddButtons();
+      overlay.classList.add('open');
+    }
+
+    function closeModal(){
+      overlay.classList.remove('open');
+    }
+
+    items.forEach(item => {
+      item.addEventListener('click', () => openModal(item.dataset.service));
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(item.dataset.service);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  })();
+
+  // Quick-add: pricing page buttons that add/remove services from the reservation form
+  function setAddButtonState(btn, isAdded){
+    btn.classList.toggle('added', isAdded);
+    btn.setAttribute('aria-pressed', isAdded ? 'true' : 'false');
+    const label = btn.querySelector('.add-label');
+    const icon = btn.querySelector('svg');
+    if (isAdded) {
+      if (label) label.textContent = 'Added';
+      if (icon) icon.innerHTML = '<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else {
+      if (label) label.textContent = 'Add';
+      if (icon) icon.innerHTML = '<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>';
+    }
+  }
+
+  function syncAddButtons(){
+    document.querySelectorAll('.add-service-btn[data-add-service]').forEach(btn => {
+      const cb = document.querySelector('#servicePanel input[type="checkbox"][value="' + btn.dataset.addService.replace(/"/g, '\\"') + '"]');
+      setAddButtonState(btn, !!(cb && cb.checked));
+    });
+  }
+
+  (function(){
+    document.querySelectorAll('.add-service-btn[data-add-service]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cb = document.querySelector('#servicePanel input[type="checkbox"][value="' + btn.dataset.addService.replace(/"/g, '\\"') + '"]');
+        if (!cb) return;
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+        syncAddButtons();
+      });
+    });
+    document.querySelectorAll('#servicePanel input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', syncAddButtons);
+    });
+    syncAddButtons();
   })();
 
   // Services needed: dropdown multi-select with chips
