@@ -582,9 +582,10 @@
       <div class="word">OilWrench<br><small>Auto Care</small></div>
     </div>
     <nav class="primary-nav">
+      <a href="#about">About Us</a>
+      <a href="#process">Procedures</a>
       <a href="#services">Services</a>
       <a href="#pricing">Pricing</a>
-      <a href="#book">Reservation</a>
     </nav>
     <a class="btn-gold" href="#book">Make a Reservation</a>
   </div>
@@ -623,6 +624,17 @@
     </div>
   </div>
 </header>
+
+<!-- ===== About Us ===== -->
+<section id="about" class="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker dark">Who We Are</span>
+      <h2>Dealership-level care, without the dealership.</h2>
+      <p>OilWrench Auto Care is an Ottawa-based mobile maintenance team. We bring the tools, the parts, and the training straight to your driveway — so routine care never has to mean an afternoon lost at the shop.</p>
+    </div>
+  </div>
+</section>
 
 <!-- ===== Services ===== -->
 <section id="services" class="services">
@@ -665,8 +677,8 @@
       <div class="service-card">
         <div class="service-icon-wrap"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z" stroke="currentColor" stroke-width="1.5"/></svg></div>
         <span class="tag">Fluids</span>
-        <h3>Fluid Service</h3>
-        <p>Power steering fluid checked, topped, or flushed precisely to manufacturer spec.</p>
+        <h3>Power Steering Service</h3>
+        <p>Power steering fluid checked, topped, or flushed precisely to manufacturer spec for smooth, responsive steering.</p>
       </div>
 
       <div class="service-card">
@@ -776,25 +788,25 @@
 <section id="process" class="process">
   <div class="wrap">
     <div class="section-head">
-      <span class="kicker dark">The House Standard</span>
+      <span class="kicker dark">Procedures</span>
       <h2>Drive in. Drive out. Nothing hidden.</h2>
-      <p>No paperwork maze, no surprise line items — here is precisely what happens the moment you arrive.</p>
+      <p>No paperwork maze, no surprise line items — here's precisely what happens the moment we arrive to you.</p>
     </div>
     <div class="process-grid">
       <div class="process-step">
         <span class="roman mono">01</span>
-        <h3>Arrive, no appointment needed</h3>
-        <p>Pull in for an oil change or routine maintenance check — walk-ins welcome during shop hours.</p>
+        <h3>Book your time & location</h3>
+        <p>Schedule online and tell us where to meet you — home, office, or curbside. No shop visit required.</p>
       </div>
       <div class="process-step">
         <span class="roman mono">02</span>
-        <h3>We show you, not just tell you</h3>
-        <p>Anything that needs attention is pointed out and explained plainly before a single tool is used.</p>
+        <h3>We arrive, fully equipped</h3>
+        <p>Our technician pulls up with every tool and part needed to complete the job right where your vehicle is parked.</p>
       </div>
       <div class="process-step">
         <span class="roman mono">03</span>
-        <h3>Back on the road</h3>
-        <p>Most maintenance visits are complete within the hour, with a clear account of the work performed.</p>
+        <h3>Back on the road, without leaving yours</h3>
+        <p>Most services are complete within the hour, with a clear account of the work performed before we drive off.</p>
       </div>
     </div>
   </div>
@@ -863,6 +875,10 @@
             <input id="phone" name="phone" type="tel" placeholder="(555) 000-0000" required>
           </div>
           <div class="field">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" placeholder="jordan@email.com" required>
+          </div>
+          <div class="field">
             <label>Vehicle</label>
             <div class="vehicle-grid">
               <select id="vehicleYear" name="vehicle_year" aria-label="Vehicle year">
@@ -921,9 +937,10 @@
                 <label class="check-item"><input type="checkbox" name="services" value="Transmission Service"><span>Transmission Service</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="AWD System Service"><span>AWD System Service</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Differential Service"><span>Differential Service</span></label>
-                <label class="check-item"><input type="checkbox" name="services" value="Fluid Service"><span>Fluid Service</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Power Steering Service"><span>Power Steering Service</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Engine &amp; Cabin Air Filter"><span>Engine &amp; Cabin Air Filter</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Spark Plugs"><span>Spark Plugs</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Seasonal Tire Change"><span>Seasonal Tire Change</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
               </div>
             </div>
