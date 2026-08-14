@@ -176,6 +176,57 @@
     box-shadow:0 0 0 2px var(--navy-black);
   }
 
+  /* ===== Promo banner ===== */
+  .promo-banner{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-deep));
+    position:relative;
+    z-index:40;
+  }
+  .promo-banner-inner{
+    display:flex; align-items:center; justify-content:center;
+    gap:18px; flex-wrap:wrap;
+    padding:11px 28px;
+  }
+  .promo-banner-text{
+    display:inline-flex; align-items:center; gap:8px;
+    color:#fff;
+    font-size:0.86rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+    text-align:center;
+  }
+  .promo-banner-icon{
+    flex:none;
+    width:38px; height:38px;
+    border-radius:50%;
+    background:var(--navy-black);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(10,12,16,0.25);
+  }
+  .promo-banner-icon svg{width:22px; height:22px; color:var(--paper);}
+  .promo-banner-text svg{width:16px; height:16px; flex:none; color:#fff;}
+  .promo-banner-text strong{font-weight:800;}
+  .promo-banner-cta{
+    flex:none;
+    background:var(--navy-black);
+    color:var(--paper);
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:7px 16px;
+    border-radius:999px;
+    transition:background .2s, transform .2s;
+    white-space:nowrap;
+  }
+  .promo-banner-cta:hover{background:var(--navy-deep); transform:translateY(-1px);}
+  @media (max-width:640px){
+    .promo-banner-inner{padding:10px 20px;}
+    .promo-banner-text{font-size:0.78rem;}
+    .promo-banner-icon{width:32px; height:32px;}
+    .promo-banner-icon svg{width:18px; height:18px;}
+  }
+
   /* ===== Hero ===== */
   .hero{
     position:relative;
@@ -880,6 +931,24 @@
   </div>
 </div>
 
+<!-- ===== Promo Banner ===== -->
+<div class="promo-banner">
+  <div class="wrap promo-banner-inner">
+    <div class="promo-banner-icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M14 10c6-5 15-4 19 3" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <rect x="9" y="16" width="21" height="17" rx="7" stroke="currentColor" stroke-width="2.6"/>
+        <path d="M30 21h7a3.5 3.5 0 0 1 3.5 3.5v1A3.5 3.5 0 0 1 37 29h-7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15 33v3a2.5 2.5 0 0 0 2.5 2.5H19" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="promo-banner-text">
+      <strong>Limited-Time Offer:</strong>&nbsp;Book any service and get a FREE handheld vacuum for your car — while supplies last.
+    </span>
+    <a href="#book" class="promo-banner-cta">Claim Offer</a>
+  </div>
+</div>
+
 <!-- ===== Hero ===== -->
 <header class="hero">
   <div class="wrap hero-grid">
@@ -976,7 +1045,7 @@
   <div class="wrap">
     <div class="section-head">
       <span class="kicker dark">What We Service</span>
-      <h2>Ten services. One visit.</h2>
+      <h2>Eleven services. One visit.</h2>
       <p>The routine maintenance that keeps your vehicle running smoothly and safely — book what you need individually, or combine it all into one appointment.</p>
     </div>
 
@@ -1050,6 +1119,13 @@
         <h3>Seasonal Tire Change</h3>
         <p>Swap between summer and winter tire sets, with proper torque and a pressure check on every wheel.</p>
       </div>
+
+      <div class="service-card">
+        <div class="service-icon-wrap"><svg viewBox="0 0 24 24" fill="none"><path d="M7 21h10a1 1 0 0 0 1-1v-9a2 2 0 0 0-2-2h-1V6a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v3H8a2 2 0 0 0-2 2v9a1 1 0 0 0 1 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 4h4M9 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="tag">BYO</span>
+        <h3>Bring Your Own Oil &amp; Filter</h3>
+        <p>Supply your own oil and filter and we'll handle the labour. Flat $50 — this service is not eligible for any current promotions or offers.</p>
+      </div>
     </div>
 
     <div class="review-banner">
@@ -1111,7 +1187,7 @@
     <div class="section-head">
       <span class="kicker dark">Transparent Rates</span>
       <h2>Pricing, no surprises.</h2>
-      <p>Every quote is confirmed before we start — final pricing depends on your vehicle's make, model, and engine size. All prices include tax — what you see is what you pay.</p>
+      <p>Every quote is confirmed before we start — final pricing depends on your vehicle's make, model, and engine size.</p>
     </div>
     <div class="pricing-tiers">
       <div class="pricing-tier">
@@ -1140,11 +1216,11 @@
         <p class="tier-desc">Full synthetic formulation for stronger protection and longer service intervals.</p>
         <div class="tier-subsection">
           <h4>Sedan &amp; SUV</h4>
-          <div class="tier-row"><span>Starting at</span><strong>$119.99</strong></div>
+          <div class="tier-row"><span>Starting at</span><strong>$109.99</strong></div>
         </div>
         <div class="tier-subsection">
           <h4>Pickup Truck</h4>
-          <div class="tier-row"><span>Starting at</span><strong>$139.99</strong></div>
+          <div class="tier-row"><span>Starting at</span><strong>$119.99</strong></div>
         </div>
       </div>
 
@@ -1155,11 +1231,11 @@
         <p class="tier-desc">Our top-tier premium synthetic, engineered for maximum performance and engine protection.</p>
         <div class="tier-subsection">
           <h4>Sedan &amp; SUV</h4>
-          <div class="tier-row"><span>Starting at</span><strong>$159.99</strong></div>
+          <div class="tier-row"><span>Starting at</span><strong>$129.99</strong></div>
         </div>
         <div class="tier-subsection">
           <h4>Pickup Truck</h4>
-          <div class="tier-row"><span>Starting at</span><strong>$179.99</strong></div>
+          <div class="tier-row"><span>Starting at</span><strong>$139.99</strong></div>
         </div>
       </div>
     </div>
@@ -1203,7 +1279,7 @@
       <div class="extra-pricing-item" data-service="sparkplugs" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Ignition</span>
         <span class="service-name">Spark Plugs</span>
-        <span class="service-price">Starting at $209.99</span>
+        <span class="service-price">Starting at $199.99</span>
         <button type="button" class="add-service-btn" data-add-service="Spark Plugs"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
       <div class="extra-pricing-item" data-service="tirechange" tabindex="0" role="button" aria-haspopup="dialog">
@@ -1211,6 +1287,12 @@
         <span class="service-name">Seasonal Tire Change</span>
         <span class="service-price">$50 — Sedan &amp; SUV</span>
         <button type="button" class="add-service-btn" data-add-service="Seasonal Tire Change"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
+      </div>
+      <div class="extra-pricing-item" data-service="byo" tabindex="0" role="button" aria-haspopup="dialog">
+        <span class="service-tag">BYO</span>
+        <span class="service-name">Bring Your Own Oil &amp; Filter</span>
+        <span class="service-price">$50 flat — excludes promotions</span>
+        <button type="button" class="add-service-btn" data-add-service="Bring Your Own Oil &amp; Filter"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
     </div>
 
@@ -1242,7 +1324,7 @@
 <div class="section-divider">
   <div class="wrap">
     <span class="divider-kicker">Before You Book</span>
-    <h3>Every listed price already includes tax — check below for ways to save even more.</h3>
+    <h3>Check below for ways to save even more.</h3>
     <p>Reservations booked with an active offer are confirmed at the discounted rate before any work begins, so there's never a surprise on your final invoice.</p>
   </div>
 </div>
@@ -1278,7 +1360,7 @@
         </div>
       </div>
     </div>
-    <p class="pricing-note">Just mention the offer when you book — we'll take care of the rest, no hoops to jump through.</p>
+    <p class="pricing-note">Just mention the offer when you book — we'll take care of the rest, no hoops to jump through. Note: our Bring Your Own Oil &amp; Filter service ($50 flat) is priced separately and is not eligible for any of the promotions above or any other current offer.</p>
     <div style="text-align:center; margin-top:24px;">
       <a href="#book" class="btn-gold" style="padding:10px 18px;">Book &amp; Save</a>
     </div>
@@ -1430,6 +1512,7 @@
                 <label class="check-item"><input type="checkbox" name="services" value="Engine &amp; Cabin Air Filter"><span>Engine &amp; Cabin Air Filter</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Spark Plugs"><span>Spark Plugs</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Seasonal Tire Change"><span>Seasonal Tire Change</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Bring Your Own Oil & Filter"><span>Bring Your Own Oil &amp; Filter — $50 flat (excludes promotions)</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
               </div>
             </div>
@@ -1883,7 +1966,7 @@
       sparkplugs: {
         tag: 'Ignition',
         title: 'Spark Plugs',
-        price: 'Starting at $209.99',
+        price: 'Starting at $199.99',
         value: 'Spark Plugs',
         desc: "Precise replacement of your vehicle's spark plugs for smoother starts, a steadier idle, and more consistent performance. This is a physical parts replacement rather than a fluid service, and pricing reflects the parts and labour involved."
       },
@@ -1893,6 +1976,13 @@
         price: '$50 — Sedan & SUV',
         value: 'Seasonal Tire Change',
         desc: "Swapping between your summer and winter tire sets, with every wheel properly torqued to spec and pressure-checked before you drive off. Currently available for sedans and SUVs."
+      },
+      byo: {
+        tag: 'BYO',
+        title: 'Bring Your Own Oil & Filter',
+        price: '$50 flat — excludes promotions',
+        value: 'Bring Your Own Oil & Filter',
+        desc: "Already have your preferred oil and filter on hand? We'll install them for a flat $50 labour fee — no shop markup on parts. Note: this service is not eligible for any current promotions or offers, as it's priced separately from our standard oil change packages."
       }
     };
 
