@@ -733,25 +733,47 @@
   .field input::placeholder{color:rgba(246,247,249,0.32);}
   .field input:focus, .field select:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
   .date-parts{
-    display:flex; align-items:center; gap:6px;
+    display:flex; align-items:center; gap:10px;
   }
   .date-parts input{
     width:auto; flex:none;
-    padding:12px 6px;
+    padding:12px 10px;
     text-align:center;
     background:rgba(255,255,255,0.04);
     border:1px solid rgba(246,247,249,0.14);
     border-radius:var(--radius-sm);
     color:var(--paper);
     font-family:'JetBrains Mono', monospace;
-    font-size:1rem;
-    letter-spacing:0.04em;
+    font-size:1.08rem;
+    letter-spacing:0.06em;
+    cursor:pointer;
   }
-  .date-parts input#dateYear{width:4.8ch;}
+  .date-parts input#dateYear{width:6.2ch;}
   .date-parts input#dateMonth,
-  .date-parts input#dateDay{width:3.2ch;}
+  .date-parts input#dateDay{width:4.4ch;}
   .date-parts input:focus{border-color:var(--gold-light); outline:none;}
-  .date-sep{color:rgba(246,247,249,0.4); font-family:'JetBrains Mono', monospace;}
+  .date-sep{color:rgba(246,247,249,0.4); font-family:'JetBrains Mono', monospace; font-size:1.08rem;}
+  .date-calendar-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:44px; height:44px; flex:none;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    border-radius:var(--radius-sm);
+    color:var(--gold-light);
+    cursor:pointer;
+    margin-left:2px;
+    transition:border-color .2s, background .2s;
+  }
+  .date-calendar-btn:hover{border-color:var(--gold-light); background:rgba(255,255,255,0.07);}
+  .date-calendar-btn svg{width:19px; height:19px;}
+  .date-native{
+    position:absolute;
+    width:1px; height:1px;
+    opacity:0;
+    pointer-events:none;
+    border:none;
+    top:0; left:0;
+  }
 
   .vehicle-subhead{
     font-family:'Inter', sans-serif; font-weight:700; font-size:1.02rem;
@@ -1519,13 +1541,17 @@
           </div>
           <div class="field">
             <label for="dateYear">Preferred date</label>
-            <div class="date-parts">
+            <div class="date-parts" id="datePartsRow">
               <input id="dateYear" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="YYYY" aria-label="Year">
               <span class="date-sep">/</span>
               <input id="dateMonth" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" aria-label="Month">
               <span class="date-sep">/</span>
               <input id="dateDay" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="DD" aria-label="Day">
+              <button type="button" class="date-calendar-btn" id="dateCalBtn" aria-label="Choose date from calendar">
+                <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
             </div>
+            <input type="date" id="dateNative" class="date-native" aria-hidden="true" tabindex="-1">
             <input type="hidden" id="dateFormatted" name="date">
           </div>
           <input type="hidden" name="_subject" value="New Reservation Request — OilWrench Auto Care">
@@ -1576,6 +1602,36 @@
     });
     dayEl.addEventListener('keydown', (e) => {
       if (e.key === 'Backspace' && dayEl.value === '') monthEl.focus();
+    });
+
+    // Calendar picker: clicking any part of the date row opens a native calendar
+    const nativeEl = document.getElementById('dateNative');
+    const calBtn = document.getElementById('dateCalBtn');
+
+    function openPicker(){
+      if (yearEl.value.length === 4 && monthEl.value && dayEl.value) {
+        const mm = monthEl.value.padStart(2, '0');
+        const dd = dayEl.value.padStart(2, '0');
+        nativeEl.value = `${yearEl.value}-${mm}-${dd}`;
+      }
+      if (typeof nativeEl.showPicker === 'function') {
+        try { nativeEl.showPicker(); return; } catch (err) { /* fall through */ }
+      }
+      nativeEl.focus();
+      nativeEl.click();
+    }
+
+    nativeEl.addEventListener('change', () => {
+      if (!nativeEl.value) return;
+      const [y, m, d] = nativeEl.value.split('-');
+      yearEl.value = y;
+      monthEl.value = m;
+      dayEl.value = d;
+    });
+
+    calBtn.addEventListener('click', (e) => { e.preventDefault(); openPicker(); });
+    [yearEl, monthEl, dayEl].forEach(el => {
+      el.addEventListener('click', openPicker);
     });
   })();
 
