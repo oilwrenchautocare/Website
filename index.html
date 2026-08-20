@@ -732,22 +732,28 @@
   .field select option{color:#111;}
   .field input::placeholder{color:rgba(246,247,249,0.32);}
   .field input:focus, .field select:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
-  .address-row{
-    display:flex; align-items:center; gap:10px;
-  }
-  .address-row input{ flex:1; min-width:0; }
-  .map-link-btn{
-    display:flex; align-items:center; justify-content:center;
-    width:44px; height:44px; flex:none;
-    background:rgba(255,255,255,0.04);
+
+  /* Google Places Autocomplete dropdown — restyled to match the site theme */
+  .pac-container{
+    background:var(--navy-deep);
     border:1px solid rgba(246,247,249,0.14);
     border-radius:var(--radius-sm);
-    color:var(--gold-light);
-    transition:border-color .2s, background .2s, opacity .2s;
+    margin-top:4px;
+    box-shadow:0 12px 28px rgba(0,0,0,0.4);
+    font-family:'Inter', sans-serif;
   }
-  .map-link-btn:hover{border-color:var(--gold-light); background:rgba(255,255,255,0.07);}
-  .map-link-btn svg{width:19px; height:19px;}
-  .map-link-btn.is-disabled{opacity:0.4; pointer-events:none;}
+  .pac-item{
+    padding:10px 14px;
+    border-top:1px solid rgba(246,247,249,0.08);
+    color:rgba(246,247,249,0.75);
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+  .pac-item:first-child{border-top:none;}
+  .pac-item:hover, .pac-item-selected{background:rgba(255,255,255,0.06);}
+  .pac-item-query{color:var(--paper); font-weight:600;}
+  .pac-matched{color:var(--gold-light);}
+  .pac-icon{filter:invert(1) brightness(1.6) saturate(0.4);}
   .date-parts{
     display:flex; align-items:center; gap:10px;
   }
@@ -942,6 +948,18 @@
     .btn-gold, .btn-outline-light{transition:none;}
   }
 </style>
+  <!--
+    Google Places Autocomplete for the "Service address" field.
+    ⚠️ REPLACE "YOUR_GOOGLE_MAPS_API_KEY" BELOW WITH YOUR OWN KEY.
+    Get one at https://console.cloud.google.com/google/maps-apis — enable the
+    "Places API", turn on billing (Google gives a recurring free monthly
+    credit that easily covers normal small-business traffic), then restrict
+    the key to your domain (oilwrenchautocare.com) under "API restrictions"
+    for security. Until you add a real key, this line will fail silently and
+    the address field will just work as a plain text box — nothing else on
+    the site is affected.
+  -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&loading=async&callback=initAddressAutocomplete" async defer></script>
 </head>
 <body>
 
@@ -1495,12 +1513,7 @@
           </div>
           <div class="field">
             <label for="address">Service address</label>
-            <div class="address-row">
-              <input id="address" name="address" type="text" placeholder="123 Maple Street, Ottawa, ON" required>
-              <a id="mapLink" class="map-link-btn" href="https://www.google.com/maps/search/?api=1&query=Ottawa%2C%20ON" target="_blank" rel="noopener" aria-label="View address on Google Maps" title="View on Google Maps">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
-              </a>
-            </div>
+            <input id="address" name="address" type="text" placeholder="123 Maple Street, Ottawa, ON" required>
           </div>
           <div class="field">
             <label>Vehicle</label>
@@ -1674,25 +1687,35 @@
     });
   })();
 
-  // Address field: keep the Google Maps link in sync with what's typed
+  // Address field: Google Places Autocomplete (Canada-wide)
   (function(){
     const addressEl = document.getElementById('address');
-    const mapLink = document.getElementById('mapLink');
-    if (!addressEl || !mapLink) return;
+    if (!addressEl) return;
 
-    function updateMapLink(){
-      const value = addressEl.value.trim();
-      if (value.length > 3) {
-        mapLink.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(value);
-        mapLink.classList.remove('is-disabled');
-      } else {
-        mapLink.href = 'https://www.google.com/maps/search/?api=1&query=Ottawa%2C%20ON';
-        mapLink.classList.add('is-disabled');
-      }
+    // Called by the Google Maps script once it loads (see <script> tag near
+    // the top of <head>). Wires up the real address-suggestion dropdown.
+    window.initAddressAutocomplete = function(){
+      if (!window.google || !google.maps || !google.maps.places) return;
+
+      const autocomplete = new google.maps.places.Autocomplete(addressEl, {
+        componentRestrictions: { country: 'ca' },   // Canada-wide
+        fields: ['formatted_address'],
+        types: ['address']
+      });
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (place && place.formatted_address) {
+          addressEl.value = place.formatted_address;
+        }
+      });
+    };
+
+    // If the Google script already finished loading before this ran
+    // (e.g. cached), initialize right away instead of waiting on the callback.
+    if (window.google && window.google.maps && window.google.maps.places) {
+      window.initAddressAutocomplete();
     }
-
-    addressEl.addEventListener('input', updateMapLink);
-    updateMapLink();
   })();
 
   // Vehicle: populate Model dropdown based on selected Make
