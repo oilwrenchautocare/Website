@@ -995,6 +995,7 @@
     .btn-gold, .btn-outline-light{transition:none;}
   }
 </style>
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 </head>
 <body>
 
@@ -1431,17 +1432,17 @@
         </div>
       </div>
       <div class="info-row">
+        <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <div>
+          <strong>Text Message</strong>
+          <span><a href="sms:6134830182" style="color:rgba(246,247,249,0.75);">(613) 483-0182</a></span>
+        </div>
+      </div>
+      <div class="info-row">
         <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 7l8.5 6 8.5-6" stroke="currentColor" stroke-width="1.5"/></svg>
         <div>
           <strong>Email</strong>
           <span><a href="mailto:info@oilwrenchautocare.com" style="color:rgba(246,247,249,0.75);">info@oilwrenchautocare.com</a></span>
-        </div>
-      </div>
-      <div class="info-row">
-        <svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></svg>
-        <div>
-          <strong>Instagram</strong>
-          <span><a href="https://www.instagram.com/oilwrenchautocare?igsh=MzEweXQwZjczcGx6&amp;utm_source=qr" target="_blank" rel="noopener" style="color:rgba(246,247,249,0.75);">@oilwrenchautocare</a></span>
         </div>
       </div>
       <div class="info-row" style="border-bottom:none;">
@@ -1566,19 +1567,9 @@
             </div>
           </div>
           <div class="field">
-            <label for="dateYear">Preferred date</label>
-            <div class="date-parts" id="datePartsRow">
-              <input id="dateYear" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="YYYY" aria-label="Year">
-              <span class="date-sep">/</span>
-              <input id="dateMonth" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" aria-label="Month">
-              <span class="date-sep">/</span>
-              <input id="dateDay" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="DD" aria-label="Day">
-              <button type="button" class="date-calendar-btn" id="dateCalBtn" aria-label="Choose date from calendar">
-                <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              </button>
-            </div>
-            <input type="date" id="dateNative" class="date-native" aria-hidden="true" tabindex="-1">
-            <input type="hidden" id="dateFormatted" name="date">
+            <label>Preferred Date &amp; Time</label>
+            <p style="color:rgba(246,247,249,0.55); font-size:0.85rem; margin:-4px 0 10px;">Pick a time that works for you — we'll confirm it along with the details above.</p>
+            <div class="calendly-inline-widget" data-url="https://calendly.com/oilwrenchautocare-support/new-meeting?hide_gdpr_banner=1&background_color=14171f&text_color=f6f7f9&primary_color=ff5a36" style="min-width:280px; height:650px; border-radius:12px; overflow:hidden;"></div>
           </div>
           <input type="hidden" name="_subject" value="New Reservation Request — OilWrench Auto Care">
           <input type="hidden" name="_template" value="table">
@@ -1629,65 +1620,6 @@
     });
     window.addEventListener('resize', () => {
       if (window.innerWidth > 980) closeMenu();
-    });
-  })();
-
-  // Auto-advance between the Year / Month / Day date fields
-  (function(){
-    const yearEl = document.getElementById('dateYear');
-    const monthEl = document.getElementById('dateMonth');
-    const dayEl = document.getElementById('dateDay');
-
-    function digitsOnly(el){
-      el.value = el.value.replace(/\D/g, '');
-    }
-
-    yearEl.addEventListener('input', () => {
-      digitsOnly(yearEl);
-      if (yearEl.value.length >= 4) monthEl.focus();
-    });
-    monthEl.addEventListener('input', () => {
-      digitsOnly(monthEl);
-      if (monthEl.value.length >= 2) dayEl.focus();
-    });
-    dayEl.addEventListener('input', () => {
-      digitsOnly(dayEl);
-    });
-    monthEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && monthEl.value === '') yearEl.focus();
-    });
-    dayEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && dayEl.value === '') monthEl.focus();
-    });
-
-    // Calendar picker: clicking any part of the date row opens a native calendar
-    const nativeEl = document.getElementById('dateNative');
-    const calBtn = document.getElementById('dateCalBtn');
-
-    function openPicker(){
-      if (yearEl.value.length === 4 && monthEl.value && dayEl.value) {
-        const mm = monthEl.value.padStart(2, '0');
-        const dd = dayEl.value.padStart(2, '0');
-        nativeEl.value = `${yearEl.value}-${mm}-${dd}`;
-      }
-      if (typeof nativeEl.showPicker === 'function') {
-        try { nativeEl.showPicker(); return; } catch (err) { /* fall through */ }
-      }
-      nativeEl.focus();
-      nativeEl.click();
-    }
-
-    nativeEl.addEventListener('change', () => {
-      if (!nativeEl.value) return;
-      const [y, m, d] = nativeEl.value.split('-');
-      yearEl.value = y;
-      monthEl.value = m;
-      dayEl.value = d;
-    });
-
-    calBtn.addEventListener('click', (e) => { e.preventDefault(); openPicker(); });
-    [yearEl, monthEl, dayEl].forEach(el => {
-      el.addEventListener('click', openPicker);
     });
   })();
 
@@ -2280,17 +2212,6 @@
     const note = document.getElementById('formNote');
     const original = btn.textContent;
 
-    const year = document.getElementById('dateYear').value;
-    const month = document.getElementById('dateMonth').value;
-    const day = document.getElementById('dateDay').value;
-    const dateFormatted = document.getElementById('dateFormatted');
-    if (year && month && day) {
-      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      dateFormatted.value = `${parseInt(day, 10)} ${monthNames[parseInt(month, 10) - 1]} ${year}`;
-    } else {
-      dateFormatted.value = '';
-    }
-
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
@@ -2313,6 +2234,8 @@
     });
   }
 </script>
+
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
 </body>
 </html>
