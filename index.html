@@ -781,14 +781,58 @@
   }
   .field select option{color:#111;}
   .field input::placeholder{color:rgba(246,247,249,0.32);}
-  .calendly-picked-note{
-    display:flex; align-items:center; gap:10px;
-    background:rgba(255,90,54,0.1);
-    border:1px solid rgba(255,90,54,0.3);
-    color:var(--gold-light);
-    font-size:0.9rem; font-weight:600;
-    padding:14px 16px;
+  .availability-picker{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(246,247,249,0.12);
     border-radius:var(--radius-sm);
+    padding:16px;
+  }
+  .availability-status{
+    color:rgba(246,247,249,0.55);
+    font-size:0.88rem;
+    font-family:'Inter', sans-serif;
+    margin:0;
+  }
+  .availability-days{
+    display:flex; gap:8px; flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .availability-day-btn{
+    padding:8px 14px;
+    border-radius:99px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(246,247,249,0.14);
+    color:rgba(246,247,249,0.75);
+    font-family:'Inter', sans-serif;
+    font-size:0.82rem; font-weight:600;
+    cursor:pointer;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .availability-day-btn:hover{border-color:rgba(255,90,54,0.4);}
+  .availability-day-btn.is-active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    border-color:transparent;
+    color:#fff;
+  }
+  .availability-times{
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .availability-time-btn{
+    padding:9px 14px;
+    border-radius:var(--radius-sm);
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(246,247,249,0.14);
+    color:rgba(246,247,249,0.85);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem; font-weight:500;
+    cursor:pointer;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .availability-time-btn:hover{border-color:rgba(255,90,54,0.4);}
+  .availability-time-btn.is-active{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    border-color:transparent;
+    color:#fff;
   }
   .field input:focus, .field select:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
   .date-parts{
@@ -1004,7 +1048,6 @@
     .btn-gold, .btn-outline-light{transition:none;}
   }
 </style>
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 </head>
 <body>
 
@@ -1577,7 +1620,9 @@
           </div>
           <div class="field">
             <label>Our Availability</label>
-            <div class="calendly-inline-widget" id="calendlyWidget" data-url="https://calendly.com/oilwrenchautocare-support/new-meeting?hide_gdpr_banner=1&background_color=14171f&text_color=f6f7f9&primary_color=ff5a36" style="min-width:280px; height:650px; border-radius:12px; overflow:hidden;"></div>
+            <div id="availabilityPicker" class="availability-picker">
+              <p class="availability-status" id="availabilityStatus">Loading live availability…</p>
+            </div>
           </div>
           <div class="field">
             <label for="preferredDate">Preferred Date &amp; Time</label>
@@ -1635,34 +1680,114 @@
     });
   })();
 
-  // Calendly: once a date & time is picked, stop before their "enter details" step —
-  // swap the calendar for our own field so the customer finishes on our form instead.
+  // Availability: fetched through a small proxy that keeps our Calendly token
+  // private (never exposed in this page's source). See the setup guide for how
+  // to deploy the proxy — it's a few minutes, one time.
+  // ⚠️ REPLACE "YOUR_PROXY_URL" BELOW WITH YOUR DEPLOYED PROXY'S URL.
+  window.__availability = { proxyUrl: 'YOUR_PROXY_URL', selectedStartTime: null };
   (function(){
-    const widgetEl = document.getElementById('calendlyWidget');
-    const preferredDateEl = document.getElementById('preferredDate');
-    if (!widgetEl || !preferredDateEl) return;
+    const AVAILABILITY_PROXY_URL = window.__availability.proxyUrl;
+    const DAYS_TO_SHOW = 7;
 
-    function isCalendlyEvent(e){
-      return e.data && typeof e.data.event === 'string' && e.data.event.indexOf('calendly.') === 0;
+    const pickerEl = document.getElementById('availabilityPicker');
+    const statusEl = document.getElementById('availabilityStatus');
+    const preferredDateEl = document.getElementById('preferredDate');
+    if (!pickerEl || !statusEl || !preferredDateEl) return;
+
+    if (!AVAILABILITY_PROXY_URL || AVAILABILITY_PROXY_URL === 'YOUR_PROXY_URL') {
+      statusEl.textContent = 'Live availability isn\u2019t connected yet — just enter your preferred date & time below.';
+      return;
     }
 
-    window.addEventListener('message', function(e){
-      if (!isCalendlyEvent(e)) return;
-      if (e.data.event !== 'calendly.date_and_time_selected') return;
+    function fmtDayLabel(date){
+      return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+    function fmtTimeLabel(date){
+      return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    }
+    function fmtFull(date){
+      return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) +
+             ' at ' + fmtTimeLabel(date);
+    }
 
-      // Best-effort: some payload shapes include a readable time; use it if present.
-      const payload = e.data.payload || {};
-      const guess = (payload.event && (payload.event.text || payload.event.name)) ||
-                    (payload.invitee && payload.invitee.text) || '';
-      if (guess && !preferredDateEl.value) preferredDateEl.value = guess;
+    function renderPicker(slotsByDay){
+      const dayKeys = Object.keys(slotsByDay).sort();
+      if (dayKeys.length === 0) {
+        pickerEl.innerHTML = '<p class="availability-status">No open times in the next ' + DAYS_TO_SHOW + ' days — please enter your preferred date &amp; time below and we\u2019ll do our best to fit you in.</p>';
+        return;
+      }
 
-      widgetEl.style.display = 'none';
-      const done = document.createElement('div');
-      done.className = 'calendly-picked-note';
-      done.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;flex:none;"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Got it — please confirm the exact date &amp; time below.</span>';
-      widgetEl.insertAdjacentElement('afterend', done);
-      preferredDateEl.focus();
+      const dayTabs = document.createElement('div');
+      dayTabs.className = 'availability-days';
+      const timeGrid = document.createElement('div');
+      timeGrid.className = 'availability-times';
+
+      function showDay(key){
+        dayTabs.querySelectorAll('.availability-day-btn').forEach(function(b){
+          b.classList.toggle('is-active', b.dataset.key === key);
+        });
+        timeGrid.innerHTML = '';
+        slotsByDay[key].forEach(function(date){
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'availability-time-btn';
+          btn.textContent = fmtTimeLabel(date);
+          btn.addEventListener('click', function(){
+            preferredDateEl.value = fmtFull(date);
+            // Store the machine-readable time so form submit can silently
+            // book this exact slot in Calendly, matching what's shown here.
+            window.__availability.selectedStartTime = date.toISOString();
+            timeGrid.querySelectorAll('.availability-time-btn').forEach(function(b){ b.classList.remove('is-active'); });
+            btn.classList.add('is-active');
+          });
+          timeGrid.appendChild(btn);
+        });
+      }
+
+      dayKeys.forEach(function(key, i){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'availability-day-btn';
+        btn.dataset.key = key;
+        btn.textContent = fmtDayLabel(slotsByDay[key][0]);
+        btn.addEventListener('click', function(){ showDay(key); });
+        dayTabs.appendChild(btn);
+      });
+
+      pickerEl.innerHTML = '';
+      pickerEl.appendChild(dayTabs);
+      pickerEl.appendChild(timeGrid);
+      showDay(dayKeys[0]);
+    }
+
+    async function loadAvailability(){
+      try {
+        const res = await fetch(AVAILABILITY_PROXY_URL);
+        if (!res.ok) throw new Error('Proxy error ' + res.status);
+        const data = await res.json();
+
+        const slotsByDay = {};
+        (data.slots || []).forEach(function(slot){
+          if (slot.status !== 'available') return;
+          const date = new Date(slot.start_time);
+          const key = date.toISOString().slice(0, 10);
+          if (!slotsByDay[key]) slotsByDay[key] = [];
+          slotsByDay[key].push(date);
+        });
+
+        renderPicker(slotsByDay);
+      } catch (err) {
+        statusEl.textContent = 'Couldn\u2019t load live availability right now — just enter your preferred date & time below.';
+      }
+    }
+
+    // If the preferred-date text is edited by hand, the picked slot no
+    // longer matches what's typed — don't silently book the old slot.
+    preferredDateEl.addEventListener('input', function(){
+      window.__availability.selectedStartTime = null;
     });
+
+    loadAvailability();
   })();
 
   // Vehicle: populate Model dropdown based on selected Make
@@ -2257,6 +2382,26 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
+    // Silently create the real Calendly booking in the background, if the
+    // customer picked a slot from the live picker (rather than typing a
+    // date by hand). This never affects what the customer sees — success
+    // or failure here doesn't change the reservation email below.
+    const proxyUrl = window.__availability && window.__availability.proxyUrl;
+    const startTime = window.__availability && window.__availability.selectedStartTime;
+    if (proxyUrl && proxyUrl !== 'YOUR_PROXY_URL' && startTime) {
+      fetch(proxyUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start_time: startTime,
+          name: form.querySelector('#name').value,
+          email: form.querySelector('#email').value,
+          phone: form.querySelector('#phone').value,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        })
+      }).catch(function(){ /* intentionally silent — see comment above */ });
+    }
+
     fetch('https://formsubmit.co/ajax/info@oilwrenchautocare.com', {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
@@ -2267,6 +2412,7 @@
       btn.textContent = 'Reservation Sent ✓';
       note.textContent = "Thanks — we've received your request and will confirm shortly.";
       form.reset();
+      if (window.__availability) window.__availability.selectedStartTime = null;
       setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
     })
     .catch(() => {
@@ -2276,8 +2422,6 @@
     });
   }
 </script>
-
-<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
 </body>
 </html>
