@@ -1709,6 +1709,15 @@
       return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) +
              ' at ' + fmtTimeLabel(date);
     }
+    // Group by the LOCAL calendar date (not UTC) so evening slots don't
+    // get split onto a separate "day" just because UTC has already
+    // rolled over to the next date.
+    function localDateKey(date){
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
 
     function renderPicker(slotsByDay){
       const dayKeys = Object.keys(slotsByDay).sort();
@@ -1770,9 +1779,12 @@
         (data.slots || []).forEach(function(slot){
           if (slot.status !== 'available') return;
           const date = new Date(slot.start_time);
-          const key = date.toISOString().slice(0, 10);
+          const key = localDateKey(date);
           if (!slotsByDay[key]) slotsByDay[key] = [];
           slotsByDay[key].push(date);
+        });
+        Object.keys(slotsByDay).forEach(function(key){
+          slotsByDay[key].sort(function(a, b){ return a - b; });
         });
 
         renderPicker(slotsByDay);
