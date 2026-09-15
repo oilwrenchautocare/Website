@@ -1684,7 +1684,7 @@
   // private (never exposed in this page's source). See the setup guide for how
   // to deploy the proxy — it's a few minutes, one time.
   // ⚠️ REPLACE "YOUR_PROXY_URL" BELOW WITH YOUR DEPLOYED PROXY'S URL.
-  window.__availability = { proxyUrl: 'https://oilwrench-calendly-proxy.soft-glade-e2da.workers.dev/', selectedStartTime: null };
+  window.__availability = { proxyUrl: 'https://oilwrench-calendly-proxy.soft-glade-e2da.workers.dev/' };
   (function(){
     const AVAILABILITY_PROXY_URL = window.__availability.proxyUrl;
     const DAYS_TO_SHOW = 7;
@@ -1734,9 +1734,6 @@
           btn.textContent = fmtTimeLabel(date);
           btn.addEventListener('click', function(){
             preferredDateEl.value = fmtFull(date);
-            // Store the machine-readable time so form submit can silently
-            // book this exact slot in Calendly, matching what's shown here.
-            window.__availability.selectedStartTime = date.toISOString();
             timeGrid.querySelectorAll('.availability-time-btn').forEach(function(b){ b.classList.remove('is-active'); });
             btn.classList.add('is-active');
           });
@@ -1780,12 +1777,6 @@
         statusEl.textContent = 'Couldn\u2019t load live availability right now — just enter your preferred date & time below.';
       }
     }
-
-    // If the preferred-date text is edited by hand, the picked slot no
-    // longer matches what's typed — don't silently book the old slot.
-    preferredDateEl.addEventListener('input', function(){
-      window.__availability.selectedStartTime = null;
-    });
 
     loadAvailability();
   })();
@@ -2382,26 +2373,6 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
-    // Silently create the real Calendly booking in the background, if the
-    // customer picked a slot from the live picker (rather than typing a
-    // date by hand). This never affects what the customer sees — success
-    // or failure here doesn't change the reservation email below.
-    const proxyUrl = window.__availability && window.__availability.proxyUrl;
-    const startTime = window.__availability && window.__availability.selectedStartTime;
-    if (proxyUrl && proxyUrl !== 'YOUR_PROXY_URL' && startTime) {
-      fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          start_time: startTime,
-          name: form.querySelector('#name').value,
-          email: form.querySelector('#email').value,
-          phone: form.querySelector('#phone').value,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        })
-      }).catch(function(){ /* intentionally silent — see comment above */ });
-    }
-
     fetch('https://formsubmit.co/ajax/info@oilwrenchautocare.com', {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
@@ -2412,7 +2383,6 @@
       btn.textContent = 'Reservation Sent ✓';
       note.textContent = "Thanks — we've received your request and will confirm shortly.";
       form.reset();
-      if (window.__availability) window.__availability.selectedStartTime = null;
       setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
     })
     .catch(() => {
