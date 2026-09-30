@@ -825,14 +825,6 @@
     color:rgba(246,247,249,0.85);
     font-family:'JetBrains Mono', monospace;
     font-size:0.82rem; font-weight:500;
-    cursor:pointer;
-    transition:background .2s, border-color .2s, color .2s;
-  }
-  .availability-time-btn:hover{border-color:rgba(255,90,54,0.4);}
-  .availability-time-btn.is-active{
-    background:linear-gradient(135deg, var(--gold-light), var(--gold));
-    border-color:transparent;
-    color:#fff;
   }
   .field input:focus, .field select:focus{border-color:var(--gold-light); background:rgba(255,255,255,0.07); outline:none;}
   .date-parts{
@@ -1680,22 +1672,21 @@
     });
   })();
 
-  // Availability: fetched through a small proxy that keeps our Calendly token
-  // private (never exposed in this page's source). See the setup guide for how
-  // to deploy the proxy — it's a few minutes, one time.
-  // ⚠️ REPLACE "YOUR_PROXY_URL" BELOW WITH YOUR DEPLOYED PROXY'S URL.
-  window.__availability = { proxyUrl: 'https://oilwrench-calendly-proxy.soft-glade-e2da.workers.dev/', selectedStartTime: null };
+
+  // Availability: read-only display, fetched through a small proxy that
+  // keeps our Calendly token private (never exposed in this page's source).
+  // Purely informational — picking nothing here affects the form; customers
+  // type their preferred time into the field below themselves.
   (function(){
-    const AVAILABILITY_PROXY_URL = window.__availability.proxyUrl;
+    const AVAILABILITY_PROXY_URL = 'https://oilwrench-calendly-proxy.soft-glade-e2da.workers.dev/';
     const DAYS_TO_SHOW = 7;
 
     const pickerEl = document.getElementById('availabilityPicker');
     const statusEl = document.getElementById('availabilityStatus');
-    const preferredDateEl = document.getElementById('preferredDate');
-    if (!pickerEl || !statusEl || !preferredDateEl) return;
+    if (!pickerEl || !statusEl) return;
 
     if (!AVAILABILITY_PROXY_URL || AVAILABILITY_PROXY_URL === 'YOUR_PROXY_URL') {
-      statusEl.textContent = 'Live availability isn\u2019t connected yet — just enter your preferred date & time below.';
+      statusEl.textContent = 'Live availability isn\u2019t connected yet.';
       return;
     }
 
@@ -1704,10 +1695,6 @@
     }
     function fmtTimeLabel(date){
       return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-    }
-    function fmtFull(date){
-      return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) +
-             ' at ' + fmtTimeLabel(date);
     }
     // Group by the LOCAL calendar date (not UTC) so evening slots don't
     // get split onto a separate "day" just because UTC has already
@@ -1737,19 +1724,10 @@
         });
         timeGrid.innerHTML = '';
         slotsByDay[key].forEach(function(date){
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'availability-time-btn';
-          btn.textContent = fmtTimeLabel(date);
-          btn.addEventListener('click', function(){
-            preferredDateEl.value = fmtFull(date);
-            // Store the machine-readable time so form submit can silently
-            // book this exact slot in Calendly, matching what's shown here.
-            window.__availability.selectedStartTime = date.toISOString();
-            timeGrid.querySelectorAll('.availability-time-btn').forEach(function(b){ b.classList.remove('is-active'); });
-            btn.classList.add('is-active');
-          });
-          timeGrid.appendChild(btn);
+          const chip = document.createElement('span');
+          chip.className = 'availability-time-btn';
+          chip.textContent = fmtTimeLabel(date);
+          timeGrid.appendChild(chip);
         });
       }
 
@@ -1789,15 +1767,9 @@
 
         renderPicker(slotsByDay);
       } catch (err) {
-        statusEl.textContent = 'Couldn\u2019t load live availability right now — just enter your preferred date & time below.';
+        statusEl.textContent = 'Couldn\u2019t load live availability right now.';
       }
     }
-
-    // If the preferred-date text is edited by hand, the picked slot no
-    // longer matches what's typed — don't silently book the old slot.
-    preferredDateEl.addEventListener('input', function(){
-      window.__availability.selectedStartTime = null;
-    });
 
     loadAvailability();
   })();
@@ -2394,26 +2366,6 @@
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
-    // Silently create the real Calendly booking in the background, if the
-    // customer picked a slot from the live picker (rather than typing a
-    // date by hand). This never affects what the customer sees — success
-    // or failure here doesn't change the reservation email below.
-    const proxyUrl = window.__availability && window.__availability.proxyUrl;
-    const startTime = window.__availability && window.__availability.selectedStartTime;
-    if (proxyUrl && proxyUrl !== 'YOUR_PROXY_URL' && startTime) {
-      fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          start_time: startTime,
-          name: form.querySelector('#name').value,
-          email: form.querySelector('#email').value,
-          phone: form.querySelector('#phone').value,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        })
-      }).catch(function(){ /* intentionally silent — see comment above */ });
-    }
-
     fetch('https://formsubmit.co/ajax/info@oilwrenchautocare.com', {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
@@ -2424,7 +2376,6 @@
       btn.textContent = 'Reservation Sent ✓';
       note.textContent = "Thanks — we've received your request and will confirm shortly.";
       form.reset();
-      if (window.__availability) window.__availability.selectedStartTime = null;
       setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
     })
     .catch(() => {
