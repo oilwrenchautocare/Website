@@ -1047,6 +1047,15 @@
   .vin-status:empty{display:none;}
   .vin-status.ok{color:#7fd6a0;}
   .vin-status.err{color:#ffb4a2;}
+
+  /* ===== Terms & Conditions (small print) ===== */
+  .terms{margin-top:12px; font-size:0.7rem; line-height:1.5; color:rgba(246,247,249,0.4); text-align:center;}
+  .terms summary{cursor:pointer; list-style:none; letter-spacing:0.02em;}
+  .terms summary::-webkit-details-marker{display:none;}
+  .terms summary span{text-decoration:underline; text-underline-offset:2px;}
+  .terms summary:hover{color:rgba(246,247,249,0.65);}
+  .terms ol{text-align:left; margin:12px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:7px;}
+  .terms li strong{color:rgba(246,247,249,0.6); font-weight:600;}
 </style>
 </head>
 <body>
@@ -1663,6 +1672,17 @@
           <button type="submit" class="btn-gold">Request Reservation</button>
         </form>
         <p class="form-note" id="formNote">Reservation requests are sent directly to our team by email.</p>
+        <details class="terms">
+          <summary>By requesting a reservation, you agree to our <span>Terms &amp; Conditions</span></summary>
+          <ol>
+            <li><strong>Pre-existing conditions.</strong> OilWrench Auto Care is not responsible or liable for any damage, wear, defect, or mechanical condition that existed in a vehicle before service, including any issue that is discovered or becomes apparent during or after service.</li>
+            <li><strong>Pricing.</strong> Listed prices are subject to confirmation for your vehicle&rsquo;s make, model, and engine size. Any additional charges, such as extra oil capacity, will be confirmed with you before work begins.</li>
+            <li><strong>Inspections.</strong> Observations from our complimentary multi-point and underneath inspections are advisory, based on a visual check, and do not constitute a diagnosis or guarantee of vehicle condition.</li>
+            <li><strong>Customer-supplied parts and fluids.</strong> For Bring Your Own Oil &amp; Filter service, OilWrench Auto Care is not responsible for the quality or fitment of materials supplied by the customer.</li>
+            <li><strong>Service location.</strong> The customer is responsible for providing a safe, accessible, and level area for service. We may reschedule if conditions (weather, space, or safety) do not allow work to be performed properly.</li>
+            <li><strong>Confirmation.</strong> Submitting a reservation request does not guarantee an appointment until it is confirmed by OilWrench Auto Care.</li>
+          </ol>
+        </details>
       </div>
     </div>
   </div>
