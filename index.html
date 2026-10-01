@@ -1056,6 +1056,22 @@
   .terms summary:hover{color:rgba(246,247,249,0.65);}
   .terms ol{text-align:left; margin:12px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:7px;}
   .terms li strong{color:rgba(246,247,249,0.6); font-weight:600;}
+
+  /* ===== Live estimate ===== */
+  .estimate{margin-bottom:22px; padding:18px; border-radius:var(--radius-sm); background:rgba(255,255,255,0.04); border:1px solid rgba(246,247,249,0.14);}
+  .estimate-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;}
+  .estimate-head label{margin-bottom:0 !important;}
+  .estimate-tag{font-family:'JetBrains Mono', monospace; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light);}
+  .estimate-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .estimate-list li{display:flex; justify-content:space-between; align-items:baseline; gap:14px; font-size:0.88rem; color:rgba(246,247,249,0.82);}
+  .estimate-list li span:last-child{white-space:nowrap; font-weight:600; color:var(--paper);}
+  .estimate-list li.unpriced span:last-child{font-weight:500; font-size:0.78rem; color:rgba(246,247,249,0.55); white-space:normal; text-align:right;}
+  .estimate-total{display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; padding-top:12px; border-top:1px solid rgba(246,247,249,0.14); font-size:0.9rem; color:rgba(246,247,249,0.82);}
+  .estimate-total strong{font-size:1.5rem; font-weight:800; color:var(--gold-light); letter-spacing:-0.01em;}
+  .estimate-note{margin:10px 0 0; font-size:0.74rem; line-height:1.5; color:rgba(246,247,249,0.5);}
+
+  .oilcap-hint{margin:8px 0 0; font-size:0.76rem; line-height:1.5; color:rgba(246,247,249,0.5);}
+  .oilcap-hint.ok{color:var(--gold-light);}
 </style>
 </head>
 <body>
@@ -1257,7 +1273,7 @@
     <div class="section-head">
       <span class="kicker dark">What We Offer</span>
       <h2>Services and Pricing</h2>
-      <p>Every service we offer, with transparent starting rates — book what you need individually, or combine it all into one appointment. Final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
+      <p>Every service we offer, with transparent pricing — book what you need individually, or combine it all into one appointment. Final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
     </div>
     <div class="pricing-tiers">
       <div class="pricing-tier">
@@ -1303,7 +1319,7 @@
     <div class="section-head" style="margin-top:56px;">
       <span class="kicker dark">Additional Services</span>
       <h3 style="font-family:'Inter', sans-serif; font-weight:800; font-size:clamp(1.4rem, 2.4vw, 1.8rem); margin-top:0; color:var(--navy-deep);">Every other service we offer.</h3>
-      <p>Starting rates for every other service we offer — final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
+      <p>Pricing for every other service we offer — final pricing is confirmed for your exact make, model, and engine size before any work begins.</p>
     </div>
     <div class="extra-pricing-grid">
       <div class="extra-pricing-item" data-service="brakepads" tabindex="0" role="button" aria-haspopup="dialog">
@@ -1419,7 +1435,7 @@
       <a href="#book" class="btn-gold" style="padding:10px 18px;">Request a Review</a>
     </div>
 
-    <p class="pricing-note">Rates shown are starting prices and may vary by make, model, and engine size — every quote is confirmed with you before any work begins.</p>
+    <p class="pricing-note">Prices shown may vary by make, model, and engine size — every quote is confirmed with you before any work begins.</p>
     <div style="text-align:center; margin-top:24px;">
       <a href="#book" class="btn-gold" style="padding:10px 18px;">Get a Quote</a>
     </div>
@@ -1622,6 +1638,7 @@
                 <label class="check-item"><input type="checkbox" name="services" value="Ultra Premium Oil Change"><span>Ultra Premium Oil Change</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Brake Pads Replacement"><span>Brake Pads Replacement (front or rear, 2 wheels)</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Brake Rotors Replacement"><span>Brake Rotors Replacement (front or rear, 2 wheels)</span></label>
+                <label class="check-item"><input type="checkbox" name="services" value="Brake Pads &amp; Rotors Package"><span>Brake Pads &amp; Rotors Package (front or rear axle)</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Transmission Service"><span>Transmission Service</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Transfer Case Service"><span>Transfer Case Service</span></label>
                 <label class="check-item"><input type="checkbox" name="services" value="Differential Service"><span>Differential Service</span></label>
@@ -1635,6 +1652,21 @@
                 <label class="check-item"><input type="checkbox" name="services" value="Not sure — need advice"><span>Not sure — need advice</span></label>
               </div>
             </div>
+          </div>
+          <div class="field" id="oilCapField" style="display:none;">
+            <label for="oilCapacity">Engine oil capacity (litres)</label>
+            <input id="oilCapacity" name="oil_capacity_litres" type="number" inputmode="decimal" step="0.1" min="1" max="20" placeholder="e.g. 5.2">
+            <p class="oilcap-hint" id="oilCapHint">Found in your owner&rsquo;s manual. Up to 4.7 L is included in the package price; each additional litre is $10. Not sure? Leave blank and we&rsquo;ll confirm before work begins.</p>
+          </div>
+          <div class="estimate" id="estimateBox" style="display:none;" aria-live="polite">
+            <div class="estimate-head">
+              <label>Your estimate</label>
+              <span class="estimate-tag">Estimate</span>
+            </div>
+            <ul class="estimate-list" id="estimateList"></ul>
+            <div class="estimate-total"><span id="estimateTotalLabel">Estimated total</span><strong id="estimateTotal">$0.00</strong></div>
+            <p class="estimate-note" id="estimateNote"></p>
+            <input type="hidden" id="estimateField" name="estimate">
           </div>
           <div class="avail" id="availBox" style="display:none;">
             <div class="avail-head">
@@ -2478,23 +2510,34 @@
     updateCartBadge();
   })();
 
-  // Brake package: adds / removes pads + rotors together
+  // Brake package: its own selectable service; never double-counted with pads/rotors
   (function(){
     const btn = document.getElementById('brakePackageBtn');
     if (!btn) return;
     const q = v => document.querySelector('#servicePanel input[type="checkbox"][value="' + v + '"]');
-    const pads = q('Brake Pads Replacement'), rotors = q('Brake Rotors Replacement');
-    if (!pads || !rotors) return;
-    const sync = () => setAddButtonState(btn, pads.checked && rotors.checked);
+    const pads = q('Brake Pads Replacement'), rotors = q('Brake Rotors Replacement'), pkg = q('Brake Pads & Rotors Package');
+    if (!pads || !rotors || !pkg) return;
+    const setChecked = (cb, v) => { if (cb.checked !== v){ cb.checked = v; cb.dispatchEvent(new Event('change', { bubbles: true })); } };
+    const sync = () => setAddButtonState(btn, pkg.checked);
+
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const target = !(pads.checked && rotors.checked);
-      [pads, rotors].forEach(cb => {
-        if (cb.checked !== target){ cb.checked = target; cb.dispatchEvent(new Event('change', { bubbles: true })); }
-      });
+      setChecked(pkg, !pkg.checked);
       syncAddButtons(); updateCartBadge(); sync();
     });
-    [pads, rotors].forEach(cb => cb.addEventListener('change', sync));
+    pkg.addEventListener('change', () => {
+      if (pkg.checked){ setChecked(pads, false); setChecked(rotors, false); }
+      sync(); syncAddButtons(); updateCartBadge();
+    });
+    [pads, rotors].forEach(cb => cb.addEventListener('change', () => {
+      if (!cb.checked) return;
+      if (pads.checked && rotors.checked){          // both chosen → apply the package
+        setChecked(pads, false); setChecked(rotors, false); setChecked(pkg, true);
+      } else {
+        setChecked(pkg, false);
+      }
+      sync(); syncAddButtons(); updateCartBadge();
+    }));
     sync();
   })();
 
@@ -2550,6 +2593,96 @@
     });
 
     renderChips();
+  })();
+
+  // Live estimate: prices are read from the service cards, so they always match what's shown on the site
+  (function(){
+    const box = document.getElementById('estimateBox');
+    const list = document.getElementById('estimateList');
+    const totalEl = document.getElementById('estimateTotal');
+    const totalLabel = document.getElementById('estimateTotalLabel');
+    const note = document.getElementById('estimateNote');
+    const field = document.getElementById('estimateField');
+    const capField = document.getElementById('oilCapField');
+    const capInput = document.getElementById('oilCapacity');
+    const capHint = document.getElementById('oilCapHint');
+    const HINT_DEFAULT = capHint.textContent;
+    const checkboxes = Array.from(document.querySelectorAll('#servicePanel input[type="checkbox"]'));
+    const oils = ['Regular Oil Change', 'Synthetic Oil Change', 'Ultra Premium Oil Change'];
+    const money = n => '$' + n.toFixed(2);
+    const parse = t => { const m = /\$\s*([\d,]+(?:\.\d+)?)/.exec(t || ''); return m ? parseFloat(m[1].replace(/,/g, '')) : null; };
+
+    function priceFor(value){
+      if (value === 'Brake Pads & Rotors Package') {
+        const el = document.querySelector('.brake-package-price strong');
+        return el ? parse(el.textContent) : null;
+      }
+      const btn = Array.from(document.querySelectorAll('.add-service-btn[data-add-service]'))
+        .find(b => b.dataset.addService === value);
+      if (!btn) return null;
+      const card = btn.closest('.extra-pricing-item, .pricing-tier');
+      const el = card && card.querySelector('.service-price, .tier-price');
+      return el ? parse(el.textContent) : null;
+    }
+
+    function update(){
+      const picked = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
+      const oilPicked = picked.filter(v => oils.indexOf(v) !== -1);
+      capField.style.display = oilPicked.length ? '' : 'none';
+      if (!picked.length) { box.style.display = 'none'; field.value = ''; return; }
+
+      list.innerHTML = '';
+      let total = 0, pricedCount = 0, unpriced = 0;
+      const lines = [];
+      picked.forEach(v => {
+        const price = priceFor(v);
+        const li = document.createElement('li');
+        const name = document.createElement('span'); name.textContent = v;
+        const amt = document.createElement('span');
+        if (price !== null) {
+          total += price; pricedCount++; amt.textContent = money(price); lines.push(v + ': ' + money(price));
+        } else {
+          unpriced++; li.className = 'unpriced';
+          amt.textContent = v === 'Not sure — need advice' ? 'We\u2019ll advise you' : 'Quoted for your vehicle';
+          lines.push(v + ': quoted for vehicle');
+        }
+        li.appendChild(name); li.appendChild(amt); list.appendChild(li);
+      });
+
+      // Extra oil capacity: up to 4.7 L is included; every additional litre (or part of one) is +$10
+      capHint.className = 'oilcap-hint'; capHint.textContent = HINT_DEFAULT;
+      if (oilPicked.length) {
+        const tenths = Math.round(parseFloat(capInput.value) * 10);
+        if (tenths > 47) {
+          const litresOver = Math.ceil((tenths - 47) / 10);
+          const extra = litresOver * 10 * oilPicked.length;
+          const li = document.createElement('li');
+          const n = document.createElement('span'); n.textContent = 'Additional oil capacity (' + (tenths / 10) + ' L, ' + litresOver + ' L over 4.7 L)';
+          const a = document.createElement('span'); a.textContent = '+' + money(extra);
+          li.appendChild(n); li.appendChild(a); list.appendChild(li);
+          total += extra; lines.push('Additional oil capacity (' + (tenths / 10) + ' L): +' + money(extra));
+          capHint.className = 'oilcap-hint ok';
+          capHint.textContent = (tenths / 10) + ' L is ' + litresOver + ' L over 4.7 L, so +' + money(litresOver * 10) + ' applies to your oil package.';
+        } else if (tenths > 0) {
+          capHint.className = 'oilcap-hint ok';
+          capHint.textContent = (tenths / 10) + ' L is within the 4.7 L included in your package price. No additional charge.';
+          lines.push('Oil capacity ' + (tenths / 10) + ' L: within included 4.7 L');
+        }
+      }
+
+      totalEl.textContent = money(total);
+      totalLabel.textContent = unpriced ? 'Estimated total (priced items)' : 'Estimated total';
+      const bits = [];
+      if (picked.some(v => oils.indexOf(v) !== -1)) bits.push('Oil changes include up to 4.7 L; an additional $10 per litre applies beyond that.');
+      bits.push('This is an estimate only \u2014 your final price is confirmed with you before any work begins.');
+      note.textContent = bits.join(' ');
+      field.value = lines.join(' | ') + ' | ESTIMATED TOTAL: ' + money(total) + (unpriced ? ' (excludes items quoted separately)' : '');
+      box.style.display = '';
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', update));
+    capInput.addEventListener('input', update);
+    update();
   })();
 
   function handleBooking(e){
