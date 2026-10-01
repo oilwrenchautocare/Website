@@ -1035,6 +1035,18 @@
   .bp-was{font-size:0.78rem; color:var(--ink-soft); text-decoration:line-through;}
   .bp-save{font-size:0.78rem; font-weight:700; color:var(--gold);}
   @media (max-width:560px){ .brake-package{grid-column:span 1;} }
+
+  /* ===== VIN lookup ===== */
+  .vin-row{display:flex; gap:10px; margin-bottom:8px;}
+  .vin-row input{flex:1; min-width:0; text-transform:uppercase; letter-spacing:0.06em; font-family:'JetBrains Mono', monospace; font-size:0.9rem;}
+  .vin-row input::placeholder{text-transform:none; letter-spacing:0; font-family:'Inter', sans-serif;}
+  .vin-btn{flex:none; padding:0 18px; border-radius:var(--radius-sm); border:1px solid rgba(255,90,54,0.5); background:rgba(255,90,54,0.12); color:var(--gold-light); font-family:'Inter', sans-serif; font-weight:700; font-size:0.84rem; cursor:pointer; transition:background .2s, border-color .2s;}
+  .vin-btn:hover{background:rgba(255,90,54,0.22); border-color:var(--gold);}
+  .vin-btn:disabled{opacity:0.55; cursor:wait;}
+  .vin-status{min-height:0; margin-bottom:10px; font-size:0.84rem; line-height:1.45; color:rgba(246,247,249,0.65);}
+  .vin-status:empty{display:none;}
+  .vin-status.ok{color:#7fd6a0;}
+  .vin-status.err{color:#ffb4a2;}
 </style>
 </head>
 <body>
@@ -1533,6 +1545,11 @@
           </div>
           <div class="field">
             <label>Vehicle</label>
+            <div class="vin-row">
+              <input id="vinInput" name="vin" type="text" maxlength="17" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Have your VIN? Enter it to auto-fill (optional)" aria-label="Vehicle identification number (VIN)">
+              <button type="button" class="vin-btn" id="vinBtn">Look up</button>
+            </div>
+            <div class="vin-status" id="vinStatus" role="status" aria-live="polite"></div>
             <div class="vehicle-grid">
               <select id="vehicleYear" name="vehicle_year" aria-label="Vehicle year">
                 <option value="" disabled selected>Year</option>
@@ -2039,28 +2056,184 @@
       engineSelect.appendChild(opt);
     }
 
-    makeSelect.addEventListener('change', () => {
-      const models = modelsByMake[makeSelect.value] || [];
+    // ----- Live vehicle data (NHTSA vPIC: free US government database, no key needed) -----
+    // Models are fetched live by make + year. If the lookup fails or returns nothing,
+    // the built-in list above is used instead, so the form always works.
+    const yearSelect = document.getElementById('vehicleYear');
+    const liveCache = {};
+    let loadToken = 0;
+
+    function fetchLiveModels(make, year){
+      const key = make.toLowerCase() + '|' + year;
+      if (liveCache[key]) return Promise.resolve(liveCache[key]);
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 7000) : null;
+      const url = 'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/' +
+        encodeURIComponent(make) + '/modelyear/' + encodeURIComponent(year) + '?format=json';
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(data => {
+          const names = (data.Results || []).map(r => String(r.Model_Name || '').trim()).filter(Boolean);
+          const unique = Array.from(new Set(names)).sort((x, y) => x.localeCompare(y, 'en', { numeric: true }));
+          if (unique.length) liveCache[key] = unique;
+          return unique;
+        })
+        .finally(() => { if (timer) clearTimeout(timer); });
+    }
+
+    function renderModels(models, keepValue){
       modelSelect.innerHTML = '';
       modelSelect.disabled = false;
-
       const placeholderOpt = document.createElement('option');
       placeholderOpt.value = '';
       placeholderOpt.disabled = true;
       placeholderOpt.selected = true;
       placeholderOpt.textContent = 'Model';
       modelSelect.appendChild(placeholderOpt);
-
-      models.forEach(m => {
+      const list = models.filter(m => m !== 'Other / Not listed');
+      list.push('Other / Not listed');
+      list.forEach(m => {
         const opt = document.createElement('option');
         opt.value = m;
         opt.textContent = m;
         modelSelect.appendChild(opt);
       });
+      if (keepValue && list.indexOf(keepValue) !== -1) {
+        modelSelect.value = keepValue;
+        modelFinal.value = keepValue;
+      } else {
+        modelFinal.value = '';
+        resetCustomInput();
+        resetEngineSelect();
+      }
+    }
 
-      modelFinal.value = '';
-      resetCustomInput();
-      resetEngineSelect();
+    function refreshModels(){
+      const make = makeSelect.value;
+      if (!make) return;
+      const year = yearSelect.value;
+      const previous = modelSelect.value && modelSelect.value !== 'Other / Not listed' ? modelSelect.value : '';
+      const fallback = modelsByMake[make] || [];
+      const token = ++loadToken;
+
+      // Show the built-in list straight away (also used if "Other" make or no year yet)
+      if (!year || make === 'Other') { renderModels(fallback, previous); return Promise.resolve(); }
+
+      modelSelect.disabled = true;
+      modelSelect.innerHTML = '<option value="" disabled selected>Loading models…</option>';
+      return fetchLiveModels(make, year)
+        .then(list => list.length ? list : fallback)
+        .catch(() => fallback)
+        .then(list => { if (token === loadToken) renderModels(list, previous); });
+    }
+
+    makeSelect.addEventListener('change', () => { modelSelect.value = ''; refreshModels(); });
+    yearSelect.addEventListener('change', refreshModels);
+
+    // ----- VIN lookup (NHTSA vPIC decoder) -----
+    const vinInput = document.getElementById('vinInput');
+    const vinBtn = document.getElementById('vinBtn');
+    const vinStatus = document.getElementById('vinStatus');
+    const typeSelect = document.getElementById('vehicleType');
+    let lastVin = '';
+
+    function vinMessage(text, kind){
+      vinStatus.textContent = text || '';
+      vinStatus.className = 'vin-status' + (kind ? ' ' + kind : '');
+    }
+
+    function pickOption(select, wanted){
+      const w = String(wanted || '').trim().toLowerCase();
+      if (!w) return false;
+      const opts = Array.from(select.options).filter(o => o.value && !o.disabled);
+      let hit = opts.find(o => o.value.toLowerCase() === w);
+      if (!hit) hit = opts.find(o => o.value.toLowerCase().indexOf(w + ' ') === 0);
+      if (!hit) return false;
+      select.value = hit.value;
+      return true;
+    }
+
+    function applyDecoded(r){
+      const make = String(r.Make || '').trim();
+      const year = String(r.ModelYear || '').trim();
+      const model = String(r.Model || '').trim();
+      const series = String(r.Series || '').trim();
+
+      // Year
+      if (year) pickOption(yearSelect, year);
+      // Make (fall back to "Other" if it isn't one of our listed brands)
+      if (!pickOption(makeSelect, make)) makeSelect.value = 'Other';
+
+      return refreshModels().then(() => {
+        let matched = pickOption(modelSelect, model);
+        if (!matched && series) matched = pickOption(modelSelect, model + ' ' + series);
+        if (matched) {
+          modelSelect.dispatchEvent(new Event('change'));
+        } else if (model) {
+          modelSelect.value = 'Other / Not listed';
+          modelSelect.dispatchEvent(new Event('change'));
+          customInput.value = model;
+          modelFinal.value = model;
+        }
+
+        // Engine size
+        const disp = parseFloat(r.DisplacementL);
+        if (disp > 0) {
+          const label = disp.toFixed(1) + 'L';
+          let opt = Array.from(engineSelect.options).find(o => o.value === label);
+          if (!opt) {
+            opt = document.createElement('option');
+            opt.value = label; opt.textContent = label;
+            const notSure = Array.from(engineSelect.options).find(o => o.value === 'Not sure');
+            engineSelect.insertBefore(opt, notSure || null);
+          }
+          engineSelect.disabled = false;
+          engineSelect.value = label;
+        }
+
+        // Vehicle type
+        const body = String(r.BodyClass || '');
+        if (body) typeSelect.value = /pickup/i.test(body) ? 'Pickup Truck' : 'Sedan / SUV';
+      });
+    }
+
+    function decodeVin(){
+      const vin = vinInput.value.trim().toUpperCase();
+      vinInput.value = vin;
+      if (!vin) { vinMessage(''); return; }
+      if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        vinMessage('A VIN has 17 characters (letters and numbers, no I, O or Q). Please check it, or select your vehicle below.', 'err');
+        return;
+      }
+      lastVin = vin;
+      vinBtn.disabled = true;
+      vinMessage('Looking up your vehicle…');
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
+      fetch('https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/' + encodeURIComponent(vin) + '?format=json', ctrl ? { signal: ctrl.signal } : undefined)
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(data => {
+          const r = (data.Results || [])[0] || {};
+          if (!r.Make || !r.ModelYear) throw new Error('nodata');
+          return applyDecoded(r).then(() => {
+            const label = [r.ModelYear, (makeSelect.value && makeSelect.value !== 'Other') ? makeSelect.value : r.Make, r.Model].filter(Boolean).join(' ');
+            const bad = /(^|,)\s*1\b/.test(String(r.ErrorCode || ''));
+            vinMessage(bad
+              ? 'Found: ' + label + '. This VIN may contain a typo, so please confirm the details below.'
+              : 'Found: ' + label + '. Please confirm the details below.', bad ? '' : 'ok');
+          });
+        })
+        .catch(() => vinMessage("We couldn't read that VIN. Please check it, or select your vehicle below.", 'err'))
+        .finally(() => { if (timer) clearTimeout(timer); vinBtn.disabled = false; });
+    }
+
+    vinBtn.addEventListener('click', decodeVin);
+    vinInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); decodeVin(); } });
+    vinInput.addEventListener('input', () => {
+      const v = vinInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (v !== vinInput.value) vinInput.value = v;
+      if (v.length === 17 && v !== lastVin) decodeVin();
+      else if (v.length < 17) vinMessage('');
     });
 
     modelSelect.addEventListener('change', () => {
@@ -2074,7 +2247,13 @@
         resetCustomInput();
         modelFinal.value = modelSelect.value;
         const key = makeSelect.value + '|' + modelSelect.value;
-        populateEngineOptions(enginesByModel[key] || genericEngines);
+        let engines = enginesByModel[key];
+        if (!engines) {
+          const lower = key.toLowerCase();
+          const hit = Object.keys(enginesByModel).find(k => k.toLowerCase() === lower);
+          engines = hit ? enginesByModel[hit] : genericEngines;
+        }
+        populateEngineOptions(engines);
       }
     });
 
