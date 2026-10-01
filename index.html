@@ -1286,7 +1286,7 @@
         <p class="tier-desc">Conventional oil service for everyday driving and routine maintenance intervals.</p>
         <div class="tier-subsection tier-flat">
           <div class="tier-price">$89.99</div>
-          <div class="tier-caption">Flat rate &middot; includes up to 4.7 L of oil</div>
+          <div class="tier-caption">Flat rate &middot; includes up to 5 L of oil</div>
         </div>
       </div>
 
@@ -1301,7 +1301,7 @@
         <p class="tier-desc">Full synthetic formulation for stronger protection and longer service intervals.</p>
         <div class="tier-subsection tier-flat">
           <div class="tier-price">$119.99</div>
-          <div class="tier-caption">Flat rate &middot; includes up to 4.7 L of oil</div>
+          <div class="tier-caption">Flat rate &middot; includes up to 5 L of oil</div>
         </div>
       </div>
 
@@ -1312,12 +1312,12 @@
         <p class="tier-desc">Our top-tier premium synthetic, engineered for maximum performance and engine protection.</p>
         <div class="tier-subsection tier-flat">
           <div class="tier-price">$139.99</div>
-          <div class="tier-caption">Flat rate &middot; includes up to 4.7 L of oil</div>
+          <div class="tier-caption">Flat rate &middot; includes up to 5 L of oil</div>
         </div>
       </div>
     </div>
 
-    <p class="oil-note">Vehicles requiring more than 4.7 L of oil: an additional <strong>$10 per litre</strong> applies to all oil packages.</p>
+    <p class="oil-note">Vehicles requiring more than 5 L of oil: an additional <strong>$5 per 500 ml</strong> applies to all oil packages.</p>
 
     <div class="section-head" style="margin-top:56px;">
       <span class="kicker dark">Additional Services</span>
@@ -1659,7 +1659,7 @@
           <div class="field" id="oilCapField" style="display:none;">
             <label for="oilCapacity">Engine oil capacity (litres)</label>
             <input id="oilCapacity" name="oil_capacity_litres" type="number" inputmode="decimal" step="0.1" min="1" max="20" placeholder="e.g. 5.2">
-            <p class="oilcap-hint" id="oilCapHint">Found in your owner&rsquo;s manual. Up to 4.7 L is included in the package price; each additional litre is $10. Not sure? Leave blank and we&rsquo;ll confirm before work begins.</p>
+            <p class="oilcap-hint" id="oilCapHint">Found in your owner&rsquo;s manual. Up to 5 L is included in the package price; every additional 500 ml is $5. Not sure? Leave blank and we&rsquo;ll confirm before work begins.</p>
             <a class="oilcap-link" id="oilGoogleLink" href="https://www.google.com/search?q=engine+oil+capacity" target="_blank" rel="noopener noreferrer">Check on Google &#8599;</a>
           </div>
           <div class="estimate" id="estimateBox" style="display:none;" aria-live="polite">
@@ -1823,10 +1823,6 @@
       el.addEventListener('click', openPicker);
     });
   })();
-
-  // Oil capacity lookup (Cloudflare Worker that asks Google). Paste its URL between the quotes to switch on
-  // automatic oil capacity. Left empty, customers type it in themselves (the Google link still works).
-  const OIL_LOOKUP_API = '';
 
   // Vehicle: populate Model dropdown based on selected Make
   (function(){
@@ -2080,30 +2076,29 @@
     const modelFinal = document.getElementById('vehicleModelFinal');
     const customInput = document.getElementById('vehicleModelCustom');
     const engineSelect = document.getElementById('vehicleEngine');
-    const yearSelect = document.getElementById('vehicleYear');
-    const typeSelect = document.getElementById('vehicleType');
 
     function resetCustomInput(){
       customInput.style.display = 'none';
       customInput.value = '';
     }
 
-    function populateEngineOptions(list, placeholderText, keepValue){
+    function populateEngineOptions(list, placeholderText){
       engineSelect.innerHTML = '';
       engineSelect.disabled = false;
+
       const placeholderOpt = document.createElement('option');
       placeholderOpt.value = '';
       placeholderOpt.disabled = true;
       placeholderOpt.selected = true;
       placeholderOpt.textContent = placeholderText || 'Engine Size';
       engineSelect.appendChild(placeholderOpt);
+
       list.forEach(size => {
         const opt = document.createElement('option');
         opt.value = size;
         opt.textContent = size;
         engineSelect.appendChild(opt);
       });
-      if (keepValue && list.indexOf(keepValue) !== -1) engineSelect.value = keepValue;
     }
 
     function resetEngineSelect(){
@@ -2117,148 +2112,85 @@
       engineSelect.appendChild(opt);
     }
 
-    // ===== Live vehicle data: US EPA FuelEconomy.gov (free, no key) =====
-    // Year -> Make -> Model -> Engine are all loaded for the exact year the customer picks.
-    // If the service can't be reached, the built-in lists above are used so the form always works.
-    const FE_BASE = 'https://www.fueleconomy.gov/ws/rest/vehicle/menu/';
-    const feCache = {};
-    const STATIC_MAKES = Array.from(makeSelect.options).filter(o => o.value && o.value !== 'Other').map(o => o.value);
+    // ----- Live vehicle data (NHTSA vPIC: free US government database, no key needed) -----
+    // Models are fetched live by make + year. If the lookup fails or returns nothing,
+    // the built-in list above is used instead, so the form always works.
+    const yearSelect = document.getElementById('vehicleYear');
+    const liveCache = {};
+    let loadToken = 0;
 
-    function feMenu(path, params){
-      const qs = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
-      const url = FE_BASE + path + '?' + qs;
-      if (feCache[url]) return Promise.resolve(feCache[url]);
+    function fetchLiveModels(make, year){
+      const key = make.toLowerCase() + '|' + year;
+      if (liveCache[key]) return Promise.resolve(liveCache[key]);
       const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
-      return fetch(url, { headers: { 'Accept': 'application/json' }, signal: ctrl ? ctrl.signal : undefined })
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 7000) : null;
+      const url = 'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/' +
+        encodeURIComponent(make) + '/modelyear/' + encodeURIComponent(year) + '?format=json';
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
         .then(r => r.ok ? r.json() : Promise.reject())
-        .then(d => {
-          let items = d && d.menuItem ? d.menuItem : [];
-          if (!Array.isArray(items)) items = [items];
-          const out = items.map(i => ({ text: String(i.text || '').trim(), value: String(i.value || '').trim() })).filter(i => i.value);
-          if (out.length) feCache[url] = out;
-          return out;
+        .then(data => {
+          const names = (data.Results || []).map(r => String(r.Model_Name || '').trim()).filter(Boolean);
+          const unique = Array.from(new Set(names)).sort((x, y) => x.localeCompare(y, 'en', { numeric: true }));
+          if (unique.length) liveCache[key] = unique;
+          return unique;
         })
         .finally(() => { if (timer) clearTimeout(timer); });
-    }
-
-    // "Auto (S8), 6-cyl, 3.0 L, Turbo" -> "3.0L 6-cyl Turbo"
-    function engineLabel(text){
-      const t = String(text || '');
-      const d = /(\d+(?:\.\d+)?)\s*L\b/i.exec(t);
-      if (!d) return /electric/i.test(t) ? { label: 'Electric (no engine oil)', size: 0 } : null;
-      const c = /(\d+)[\s-]*cyl/i.exec(t);
-      const size = parseFloat(d[1]);
-      let label = size.toFixed(1) + 'L' + (c ? ' ' + c[1] + '-cyl' : '');
-      if (/diesel/i.test(t)) label += ' Diesel';
-      if (/turbo/i.test(t)) label += ' Turbo';
-      else if (/supercharg/i.test(t)) label += ' Supercharged';
-      if (/hybrid/i.test(t)) label += ' Hybrid';
-      return { label, size };
-    }
-
-    function setMakes(names, keep){
-      makeSelect.innerHTML = '<option value="" disabled selected>Make</option>';
-      names.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; makeSelect.appendChild(o); });
-      const other = document.createElement('option'); other.value = 'Other'; other.textContent = 'Other'; makeSelect.appendChild(other);
-      if (keep && (names.indexOf(keep) !== -1 || keep === 'Other')) makeSelect.value = keep;
-    }
-
-    let makeToken = 0, modelToken = 0, engineToken = 0;
-
-    function loadMakes(){
-      const year = yearSelect.value, keep = makeSelect.value, token = ++makeToken;
-      if (!year) return Promise.resolve();
-      return feMenu('make', { year })
-        .then(items => items.map(i => i.value))
-        .catch(() => [])
-        .then(names => { if (token === makeToken) setMakes(names.length ? names : STATIC_MAKES, keep); });
     }
 
     function renderModels(models, keepValue){
       modelSelect.innerHTML = '';
       modelSelect.disabled = false;
-      const ph = document.createElement('option');
-      ph.value = ''; ph.disabled = true; ph.selected = true; ph.textContent = 'Model';
-      modelSelect.appendChild(ph);
-      const list = models.filter(m => m !== 'Other / Not listed'); list.push('Other / Not listed');
-      list.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; modelSelect.appendChild(o); });
-      if (keepValue && list.indexOf(keepValue) !== -1) { modelSelect.value = keepValue; modelFinal.value = keepValue; }
-      else { modelFinal.value = ''; resetCustomInput(); resetEngineSelect(); }
+      const placeholderOpt = document.createElement('option');
+      placeholderOpt.value = '';
+      placeholderOpt.disabled = true;
+      placeholderOpt.selected = true;
+      placeholderOpt.textContent = 'Model';
+      modelSelect.appendChild(placeholderOpt);
+      const list = models.filter(m => m !== 'Other / Not listed');
+      list.push('Other / Not listed');
+      list.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        modelSelect.appendChild(opt);
+      });
+      if (keepValue && list.indexOf(keepValue) !== -1) {
+        modelSelect.value = keepValue;
+        modelFinal.value = keepValue;
+      } else {
+        modelFinal.value = '';
+        resetCustomInput();
+        resetEngineSelect();
+      }
     }
 
     function refreshModels(){
-      const make = makeSelect.value, year = yearSelect.value;
-      if (!make) return Promise.resolve();
-      const keep = modelSelect.value && modelSelect.value !== 'Other / Not listed' ? modelSelect.value : '';
+      const make = makeSelect.value;
+      if (!make) return;
+      const year = yearSelect.value;
+      const previous = modelSelect.value && modelSelect.value !== 'Other / Not listed' ? modelSelect.value : '';
       const fallback = modelsByMake[make] || [];
-      const token = ++modelToken;
-      if (!year || make === 'Other') { renderModels(fallback, keep); return Promise.resolve(); }
+      const token = ++loadToken;
+
+      // Show the built-in list straight away (also used if "Other" make or no year yet)
+      if (!year || make === 'Other') { renderModels(fallback, previous); return Promise.resolve(); }
+
       modelSelect.disabled = true;
-      modelSelect.innerHTML = '<option value="" disabled selected>Loading models\u2026</option>';
-      return feMenu('model', { year, make })
-        .then(items => Array.from(new Set(items.map(i => i.value))).sort((x, y) => x.localeCompare(y, 'en', { numeric: true })))
-        .catch(() => [])
-        .then(list => { if (token === modelToken) renderModels(list.length ? list : fallback, keep); });
+      modelSelect.innerHTML = '<option value="" disabled selected>Loading models…</option>';
+      return fetchLiveModels(make, year)
+        .then(list => list.length ? list : fallback)
+        .catch(() => fallback)
+        .then(list => { if (token === loadToken) renderModels(list, previous); });
     }
 
-    function loadEngines(){
-      const make = makeSelect.value, year = yearSelect.value, model = modelSelect.value;
-      const keep = engineSelect.value, token = ++engineToken;
-      const fallbackList = () => {
-        const key = make + '|' + model;
-        let engines = enginesByModel[key];
-        if (!engines) {
-          const lower = key.toLowerCase();
-          const hit = Object.keys(enginesByModel).find(k => k.toLowerCase() === lower);
-          engines = hit ? enginesByModel[hit] : genericEngines;
-        }
-        return engines;
-      };
-      if (!model || model === 'Other / Not listed' || !year || !make || make === 'Other') {
-        populateEngineOptions(model === 'Other / Not listed' ? genericEngines : fallbackList(), null, keep);
-        return Promise.resolve();
-      }
-      engineSelect.disabled = true;
-      engineSelect.innerHTML = '<option value="" disabled selected>Loading engines\u2026</option>';
-      return feMenu('options', { year, make, model })
-        .then(items => {
-          const seen = {}, found = [];
-          items.forEach(i => { const e = engineLabel(i.text); if (e && !seen[e.label]) { seen[e.label] = 1; found.push(e); } });
-          found.sort((x, y) => x.size - y.size);
-          return found.map(e => e.label);
-        })
-        .catch(() => [])
-        .then(list => {
-          if (token !== engineToken) return;
-          populateEngineOptions(list.length ? list.concat(['Not sure']) : fallbackList(), null, keep);
-        });
-    }
-
-    function modelChanged(){
-      if (modelSelect.value === 'Other / Not listed') {
-        customInput.style.display = 'block';
-        customInput.value = '';
-        customInput.focus();
-        modelFinal.value = '';
-      } else {
-        resetCustomInput();
-        modelFinal.value = modelSelect.value;
-      }
-      return loadEngines();
-    }
-
-    yearSelect.addEventListener('change', () => {
-      loadMakes().then(refreshModels).then(() => { if (modelSelect.value) loadEngines(); });
-    });
-    makeSelect.addEventListener('change', () => { modelSelect.value = ''; engineSelect.value = ''; refreshModels(); });
-    modelSelect.addEventListener('change', modelChanged);
-    customInput.addEventListener('input', () => { modelFinal.value = customInput.value; });
+    makeSelect.addEventListener('change', () => { modelSelect.value = ''; refreshModels(); });
+    yearSelect.addEventListener('change', refreshModels);
 
     // ----- VIN lookup (NHTSA vPIC decoder) -----
     const vinInput = document.getElementById('vinInput');
     const vinBtn = document.getElementById('vinBtn');
     const vinStatus = document.getElementById('vinStatus');
+    const typeSelect = document.getElementById('vehicleType');
     let lastVin = '';
 
     function vinMessage(text, kind){
@@ -2272,12 +2204,6 @@
       const opts = Array.from(select.options).filter(o => o.value && !o.disabled);
       let hit = opts.find(o => o.value.toLowerCase() === w);
       if (!hit) hit = opts.find(o => o.value.toLowerCase().indexOf(w + ' ') === 0);
-      if (!hit) {                                   // ignore spaces / dashes: "F-150" matches "F150 Pickup 2WD"
-        const n = w.replace(/[^a-z0-9]/g, '');
-        const hits = opts.filter(o => o.value.toLowerCase().replace(/[^a-z0-9]/g, '').indexOf(n) === 0);
-        hits.sort((x, y) => x.value.length - y.value.length);
-        hit = hits[0];
-      }
       if (!hit) return false;
       select.value = hit.value;
       return true;
@@ -2289,26 +2215,28 @@
       const model = String(r.Model || '').trim();
       const series = String(r.Series || '').trim();
 
+      // Year
       if (year) pickOption(yearSelect, year);
-      return loadMakes().then(() => {
-        if (!pickOption(makeSelect, make)) makeSelect.value = 'Other';
-        return refreshModels();
-      }).then(() => {
+      // Make (fall back to "Other" if it isn't one of our listed brands)
+      if (!pickOption(makeSelect, make)) makeSelect.value = 'Other';
+
+      return refreshModels().then(() => {
         let matched = pickOption(modelSelect, model);
         if (!matched && series) matched = pickOption(modelSelect, model + ' ' + series);
-        if (!matched && model) {
+        if (matched) {
+          modelSelect.dispatchEvent(new Event('change'));
+        } else if (model) {
           modelSelect.value = 'Other / Not listed';
-          modelChanged();
+          modelSelect.dispatchEvent(new Event('change'));
           customInput.value = model;
           modelFinal.value = model;
-          return null;
         }
-        return modelChanged();
-      }).then(() => {
+
+        // Engine size
         const disp = parseFloat(r.DisplacementL);
         if (disp > 0) {
           const label = disp.toFixed(1) + 'L';
-          let opt = Array.from(engineSelect.options).find(o => o.value === label || o.value.indexOf(label + ' ') === 0);
+          let opt = Array.from(engineSelect.options).find(o => o.value === label);
           if (!opt) {
             opt = document.createElement('option');
             opt.value = label; opt.textContent = label;
@@ -2316,11 +2244,13 @@
             engineSelect.insertBefore(opt, notSure || null);
           }
           engineSelect.disabled = false;
-          engineSelect.value = opt.value;
+          engineSelect.value = label;
+          engineSelect.dispatchEvent(new Event('change'));
         }
+
+        // Vehicle type
         const body = String(r.BodyClass || '');
         if (body) typeSelect.value = /pickup/i.test(body) ? 'Pickup Truck' : 'Sedan / SUV';
-        engineSelect.dispatchEvent(new Event('change', { bubbles: true }));   // lets the estimate refresh
       });
     }
 
@@ -2334,7 +2264,7 @@
       }
       lastVin = vin;
       vinBtn.disabled = true;
-      vinMessage('Looking up your vehicle\u2026');
+      vinMessage('Looking up your vehicle…');
       const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
       const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
       fetch('https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/' + encodeURIComponent(vin) + '?format=json', ctrl ? { signal: ctrl.signal } : undefined)
@@ -2361,6 +2291,31 @@
       if (v !== vinInput.value) vinInput.value = v;
       if (v.length === 17 && v !== lastVin) decodeVin();
       else if (v.length < 17) vinMessage('');
+    });
+
+    modelSelect.addEventListener('change', () => {
+      if (modelSelect.value === 'Other / Not listed') {
+        customInput.style.display = 'block';
+        customInput.value = '';
+        customInput.focus();
+        modelFinal.value = '';
+        populateEngineOptions(genericEngines);
+      } else {
+        resetCustomInput();
+        modelFinal.value = modelSelect.value;
+        const key = makeSelect.value + '|' + modelSelect.value;
+        let engines = enginesByModel[key];
+        if (!engines) {
+          const lower = key.toLowerCase();
+          const hit = Object.keys(enginesByModel).find(k => k.toLowerCase() === lower);
+          engines = hit ? enginesByModel[hit] : genericEngines;
+        }
+        populateEngineOptions(engines);
+      }
+    });
+
+    customInput.addEventListener('input', () => {
+      modelFinal.value = customInput.value;
     });
 
     resetEngineSelect();
@@ -2662,34 +2617,6 @@
     const googleLink = document.getElementById('oilGoogleLink');
     const yearEl = document.getElementById('vehicleYear'), makeEl = document.getElementById('vehicleMake'),
           modelEl = document.getElementById('vehicleModelFinal'), engineEl = document.getElementById('vehicleEngine');
-    // ----- Automatic lookup once the vehicle (and engine) is known -----
-    let autoFilled = false, oilToken = 0;
-    function setAuto(litres, source){
-      capInput.value = litres.toFixed(1); autoFilled = true; autoSource = source || ''; update();
-    }
-    let autoSource = '';
-    function clearAuto(){ if (autoFilled) { capInput.value = ''; autoFilled = false; autoSource = ''; } update(); }
-
-    function autoFillOil(){
-      if (capInput.dataset.manual === '1') return;             // customer typed their own value
-      const token = ++oilToken;
-      const year = yearEl.value, make = makeEl.value, model = modelEl.value;
-      const engine = engineEl.value && engineEl.value !== 'Not sure' ? engineEl.value : '';
-      if (!OIL_LOOKUP_API || !year || !make || make === 'Other' || !model || !engineEl.value) { clearAuto(); return; }
-      capHint.className = 'oilcap-hint';
-      capHint.textContent = 'Looking up the oil capacity for your vehicle\u2026';
-      const qs = 'year=' + encodeURIComponent(year) + '&make=' + encodeURIComponent(make) +
-                 '&model=' + encodeURIComponent(model) + (engine ? '&engine=' + encodeURIComponent(engine) : '');
-      fetch(OIL_LOOKUP_API.replace(/\/$/, '') + '/oil?' + qs)
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(d => {
-          if (token !== oilToken || capInput.dataset.manual === '1') return;
-          const l = parseFloat(d.litres);
-          if (l > 0) setAuto(l, d.source); else clearAuto();
-        })
-        .catch(() => { if (token === oilToken) clearAuto(); });
-    }
-
     function updateGoogleLink(){
       const engine = engineEl.value && engineEl.value !== 'Not sure' ? engineEl.value : '';
       const make = makeEl.value && makeEl.value !== 'Other' ? makeEl.value : '';
@@ -2739,35 +2666,31 @@
         li.appendChild(name); li.appendChild(amt); list.appendChild(li);
       });
 
-      // Extra oil capacity: up to 4.7 L is included; every additional litre (or part of one) is +$10
+      // Extra oil capacity: up to 5 L is included; every additional 500 ml (or part of it) is +$5
       capHint.className = 'oilcap-hint'; capHint.textContent = HINT_DEFAULT;
       if (oilPicked.length) {
         const tenths = Math.round(parseFloat(capInput.value) * 10);
-        if (tenths > 47) {
-          const litresOver = Math.ceil((tenths - 47) / 10);
-          const extra = litresOver * 10 * oilPicked.length;
+        if (tenths > 50) {
+          const steps = Math.ceil((tenths - 50) / 5), overL = (tenths - 50) / 10;
+          const extra = steps * 5 * oilPicked.length;
           const li = document.createElement('li');
-          const n = document.createElement('span'); n.textContent = 'Additional oil capacity (' + (tenths / 10) + ' L, ' + litresOver + ' L over 4.7 L)';
+          const n = document.createElement('span'); n.textContent = 'Additional oil capacity (' + (tenths / 10) + ' L, ' + overL.toFixed(1) + ' L over 5 L)';
           const a = document.createElement('span'); a.textContent = '+' + money(extra);
           li.appendChild(n); li.appendChild(a); list.appendChild(li);
           total += extra; lines.push('Additional oil capacity (' + (tenths / 10) + ' L): +' + money(extra));
           capHint.className = 'oilcap-hint ok';
-          capHint.textContent = (tenths / 10) + ' L is ' + litresOver + ' L over 4.7 L, so +' + money(litresOver * 10) + ' applies to your oil package.';
+          capHint.textContent = (tenths / 10) + ' L is ' + overL.toFixed(1) + ' L over 5 L, so +' + money(steps * 5) + ' applies to your oil package (every 500 ml is $5).';
         } else if (tenths > 0) {
           capHint.className = 'oilcap-hint ok';
-          capHint.textContent = (tenths / 10) + ' L is within the 4.7 L included in your package price. No additional charge.';
-          lines.push('Oil capacity ' + (tenths / 10) + ' L: within included 4.7 L');
+          capHint.textContent = (tenths / 10) + ' L is within the 5 L included in your package price. No additional charge.';
+          lines.push('Oil capacity ' + (tenths / 10) + ' L: within included 5 L');
         }
-      }
-
-      if (oilPicked.length && autoFilled && capInput.value) {
-        capHint.textContent += ' (Found online for your vehicle' + (autoSource ? ' \u2014 ' + autoSource : '') + '. We\u2019ll confirm the exact amount before service. You can change it.)';
       }
 
       totalEl.textContent = money(total);
       totalLabel.textContent = unpriced ? 'Estimated total (priced items)' : 'Estimated total';
       const bits = [];
-      if (picked.some(v => oils.indexOf(v) !== -1)) bits.push('Oil changes include up to 4.7 L; an additional $10 per litre applies beyond that.');
+      if (picked.some(v => oils.indexOf(v) !== -1)) bits.push('Oil changes include up to 5 L; an additional $5 per 500 ml applies beyond that.');
       bits.push('This is an estimate only \u2014 your final price is confirmed with you before any work begins.');
       note.textContent = bits.join(' ');
       field.value = lines.join(' | ') + ' | ESTIMATED TOTAL: ' + money(total) + (unpriced ? ' (excludes items quoted separately)' : '');
@@ -2775,9 +2698,9 @@
     }
 
     checkboxes.forEach(cb => cb.addEventListener('change', update));
-    capInput.addEventListener('input', () => { capInput.dataset.manual = capInput.value ? '1' : ''; autoFilled = false; update(); });
-    ['vehicleYear', 'vehicleMake', 'vehicleModel', 'vehicleEngine'].forEach(id => document.getElementById(id).addEventListener('change', () => setTimeout(() => { updateGoogleLink(); autoFillOil(); }, 0)));
-    document.getElementById('bookingForm').addEventListener('reset', () => setTimeout(() => { capInput.dataset.manual = ''; autoFilled = false; update(); }, 0));
+    capInput.addEventListener('input', update);
+    ['vehicleYear', 'vehicleMake', 'vehicleModel', 'vehicleEngine'].forEach(id => document.getElementById(id).addEventListener('change', () => setTimeout(updateGoogleLink, 0)));
+    document.getElementById('bookingForm').addEventListener('reset', () => setTimeout(update, 0));
     document.getElementById('vinInput').addEventListener('input', () => setTimeout(updateGoogleLink, 900));
     updateGoogleLink();
     update();
