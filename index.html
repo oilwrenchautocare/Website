@@ -1075,6 +1075,11 @@
 
   .oilcap-link{display:inline-block; margin-top:8px; font-size:0.84rem; font-weight:600; color:var(--gold-light); text-decoration:underline; text-underline-offset:3px;}
   .oilcap-link:hover{color:var(--gold);}
+
+  /* ===== Terms checkbox ===== */
+  .terms-check{display:flex; align-items:flex-start; gap:10px; margin:0 0 14px; font-size:0.8rem; line-height:1.45; color:rgba(246,247,249,0.7); cursor:pointer;}
+  .terms-check input{width:16px; height:16px; margin-top:2px; flex:none; accent-color:var(--gold); cursor:pointer;}
+  .terms-check a{color:var(--gold-light); text-decoration:underline; text-underline-offset:2px;}
 </style>
 </head>
 <body>
@@ -1705,15 +1710,19 @@
           <input type="hidden" name="subject" value="New Reservation Request — OilWrench Auto Care">
           <input type="hidden" name="from_name" value="OilWrench Auto Care Website">
           <input type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off">
+          <label class="terms-check">
+            <input type="checkbox" id="termsAgree" name="terms_accepted" value="Yes" required>
+            <span>I have read and agree to the <a href="#" id="termsLink">Terms &amp; Conditions</a></span>
+          </label>
           <button type="submit" class="btn-gold">Request Reservation</button>
         </form>
         <p class="form-note" id="formNote">Reservation requests are sent directly to our team by email.</p>
         <details class="terms">
           <summary>By requesting a reservation, you agree to our <span>Terms &amp; Conditions</span></summary>
           <ol>
-            <li><strong>Pre-existing conditions.</strong> OilWrench Auto Care is not responsible or liable for any damage, wear, defect, or mechanical condition that existed in a vehicle before service, including any issue that is discovered or becomes apparent during or after service.</li>
-            <li><strong>Pricing.</strong> Listed prices are subject to confirmation for your vehicle&rsquo;s make, model, and engine size. Any additional charges, such as extra oil capacity, will be confirmed with you before work begins.</li>
             <li><strong>Inspections.</strong> Observations from our complimentary multi-point and underneath inspections are advisory, based on a visual check, and do not constitute a diagnosis or guarantee of vehicle condition.</li>
+            <li><strong>Pricing.</strong> Listed prices are subject to confirmation for your vehicle&rsquo;s make, model, and engine size. Any additional charges, such as extra oil capacity, will be confirmed with you before work begins.</li>
+            <li><strong>Pre-existing conditions.</strong> OilWrench Auto Care is not responsible or liable for any damage, wear, defect, or mechanical condition that existed in a vehicle before service, including any issue that is discovered or becomes apparent during or after service.</li>
             <li><strong>Customer-supplied parts and fluids.</strong> For Bring Your Own Oil &amp; Filter service, OilWrench Auto Care is not responsible for the quality or fitment of materials supplied by the customer.</li>
             <li><strong>Service location.</strong> The customer is responsible for providing a safe, accessible, and level area for service. We may reschedule if conditions (weather, space, or safety) do not allow work to be performed properly.</li>
             <li><strong>Confirmation.</strong> Submitting a reservation request does not guarantee an appointment until it is confirmed by OilWrench Auto Care.</li>
@@ -2864,6 +2873,18 @@
         box.style.display = '';
       })
       .catch(() => { /* stay hidden; manual date entry still works */ });
+  })();
+
+  // Terms checkbox: the link opens the Terms & Conditions below the button
+  (function(){
+    const link = document.getElementById('termsLink');
+    const details = document.querySelector('details.terms');
+    if (!link || !details) return;
+    link.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      details.open = true;
+      details.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   })();
 </script>
 
