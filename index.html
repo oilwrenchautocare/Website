@@ -1358,7 +1358,7 @@
       <div class="extra-pricing-item" data-service="transmission" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Drivetrain</span>
         <span class="service-name">Transmission Service</span>
-        <span class="service-price">$249.99</span>
+        <span class="service-price">$249.99 – $299.99</span>
         <button type="button" class="add-service-btn" data-add-service="Transmission Service"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
       <div class="extra-pricing-item" data-service="awd" tabindex="0" role="button" aria-haspopup="dialog">
@@ -1376,7 +1376,7 @@
       <div class="extra-pricing-item" data-service="sparkplugs" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Ignition</span>
         <span class="service-name">Spark Plugs Replacement</span>
-        <span class="service-price">$209.99</span>
+        <span class="service-price">$249.99</span>
         <button type="button" class="add-service-btn" data-add-service="Spark Plugs Replacement"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
       <div class="extra-pricing-item" data-service="powersteering" tabindex="0" role="button" aria-haspopup="dialog">
@@ -1394,7 +1394,7 @@
       <div class="extra-pricing-item" data-service="tirechange" tabindex="0" role="button" aria-haspopup="dialog">
         <span class="service-tag">Seasonal</span>
         <span class="service-name">Seasonal Tire Change</span>
-        <span class="service-price">$59.99 — Sedan &amp; SUV, tires on rims</span>
+        <span class="service-price" data-price-high="74.99">$59.99 Sedan · $74.99 SUV — tires on rims</span>
         <button type="button" class="add-service-btn" data-add-service="Seasonal Tire Change"><svg class="icon-plus" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span class="add-label">Add</span></button>
       </div>
       <div class="extra-pricing-item" data-service="tirerepair" tabindex="0" role="button" aria-haspopup="dialog">
@@ -2348,7 +2348,7 @@
       transmission: {
         tag: 'Drivetrain',
         title: 'Transmission Service',
-        price: '$249.99',
+        price: '$249.99 – $299.99',
         value: 'Transmission Service',
         desc: "A full transmission fluid exchange — old fluid is drained and replaced with fresh, manufacturer-spec fluid to keep gear shifts smooth and reduce long-term wear. Like most of our drivetrain services, this is fundamentally a fluid service: fresh fluid is what keeps the internal components properly lubricated and cooled."
       },
@@ -2383,14 +2383,14 @@
       sparkplugs: {
         tag: 'Ignition',
         title: 'Spark Plugs Replacement',
-        price: '$209.99',
+        price: '$249.99',
         value: 'Spark Plugs Replacement',
         desc: "Precise replacement of your vehicle's spark plugs for smoother starts, a steadier idle, and more consistent performance. This is a physical parts replacement rather than a fluid service, and pricing reflects the parts and labour involved."
       },
       tirechange: {
         tag: 'Seasonal',
         title: 'Seasonal Tire Change',
-        price: '$59.99 — Sedan & SUV, tires on rims',
+        price: '$59.99 Sedan · $74.99 SUV — tires on rims',
         value: 'Seasonal Tire Change',
         desc: "Swapping between your summer and winter tire sets, with every wheel properly torqued to spec and pressure-checked before you drive off. This rate applies when your seasonal tires are already mounted on rims — currently available for sedans and SUVs."
       },
@@ -2651,6 +2651,15 @@
       return el ? parse(el.textContent) : null;
     }
 
+    function highFor(value){
+      const btn = Array.from(document.querySelectorAll('.add-service-btn[data-add-service]')).find(b => b.dataset.addService === value);
+      const card = btn && btn.closest('.extra-pricing-item, .pricing-tier');
+      const el = card && card.querySelector('.service-price');
+      if (el && el.dataset.priceHigh) return parseFloat(el.dataset.priceHigh);
+      const m = el && /\$\s*[\d,]+(?:\.\d+)?\s*[\u2013\u2014-]\s*\$\s*([\d,]+(?:\.\d+)?)/.exec(el.textContent);
+      return m ? parseFloat(m[1].replace(/,/g, '')) : null;
+    }
+
     function update(){
       const picked = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       const oilPicked = picked.filter(v => oils.indexOf(v) !== -1);
@@ -2658,7 +2667,7 @@
       if (!picked.length) { box.style.display = 'none'; field.value = ''; return; }
 
       list.innerHTML = '';
-      let total = 0, pricedCount = 0, unpriced = 0;
+      let total = 0, hiExtra = 0, pricedCount = 0, unpriced = 0;
       const lines = [];
       picked.forEach(v => {
         const price = priceFor(v);
@@ -2666,7 +2675,10 @@
         const name = document.createElement('span'); name.textContent = v;
         const amt = document.createElement('span');
         if (price !== null) {
-          total += price; pricedCount++; amt.textContent = money(price); lines.push(v + ': ' + money(price));
+          const hi = highFor(v);
+          total += price; pricedCount++;
+          if (hi !== null && hi > price) { hiExtra += hi - price; amt.textContent = money(price) + ' \u2013 ' + money(hi); lines.push(v + ': ' + money(price) + ' - ' + money(hi)); }
+          else { amt.textContent = money(price); lines.push(v + ': ' + money(price)); }
         } else {
           unpriced++; li.className = 'unpriced';
           amt.textContent = v === 'Not sure — need advice' ? 'We\u2019ll advise you' : 'Quoted for your vehicle';
@@ -2696,13 +2708,14 @@
         }
       }
 
-      totalEl.textContent = money(total);
+      const totalTxt = hiExtra > 0 ? money(total) + ' \u2013 ' + money(total + hiExtra) : money(total);
+      totalEl.textContent = totalTxt;
       totalLabel.textContent = unpriced ? 'Estimated total (priced items)' : 'Estimated total';
       const bits = [];
       if (picked.some(v => oils.indexOf(v) !== -1)) bits.push('Oil changes include up to 5 L; an additional $5 per 500 ml applies beyond that.');
       bits.push('This is an estimate only \u2014 your final price is confirmed with you before any work begins.');
       note.textContent = bits.join(' ');
-      field.value = lines.join(' | ') + ' | ESTIMATED TOTAL: ' + money(total) + (unpriced ? ' (excludes items quoted separately)' : '');
+      field.value = lines.join(' | ') + ' | ESTIMATED TOTAL: ' + totalTxt + (unpriced ? ' (excludes items quoted separately)' : '');
       box.style.display = '';
     }
 
